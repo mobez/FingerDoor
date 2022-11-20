@@ -1,5 +1,6 @@
 #ifndef SI7021_H_
 #define SI7021_H_
+#include <SPI.h>
 #include <Wire.h>
 #include <Arduino.h>
 #include "Adafruit_Si7021.h"

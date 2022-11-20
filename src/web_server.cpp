@@ -439,44 +439,58 @@ void init_web(void){
   });
   server.on("/addPhalanx", HTTP_POST, [](){
     if (!check_autch()) return;
-    if (add_phalanx()>=0){
-      figner_web = figner_start;
-      conf_finger[1][freeIdFinger].id = freeIdFinger;
-      conf_finger[1][freeIdFinger].phalanx = (fingers)atoi(server.arg("ph").c_str());
-      strcpy((char  *)conf_finger[1][freeIdFinger].name, server.arg("nm").c_str());
-      xSemaphoreGiveFromISR(addSemaphore, NULL);
-      server.send(200, "text/plain", "Добавте палец!");
+    if (figner_web != figner_start){
+      if (add_phalanx()>=0){
+        figner_web = figner_start;
+        conf_finger[1][freeIdFinger].id = freeIdFinger;
+        conf_finger[1][freeIdFinger].phalanx = (fingers)atoi(server.arg("ph").c_str());
+        strcpy((char  *)conf_finger[1][freeIdFinger].name, server.arg("nm").c_str());
+        xSemaphoreGiveFromISR(addSemaphore, NULL);
+        server.send(200, "text/plain", "Добавте палец!");
+      }else{
+        server.send(404, "text/plain", "Нет свободных пальцев!");
+      }
     }else{
-      server.send(404, "text/plain", "Нет свободных пальцев!");
-    }    
+      server.send(404, "text/plain", "Занято другими действиями!");
+    }
   });
   server.on("/sts_finger", HTTP_GET, [](){
     if (!check_autch()) return;
     JSONVar myObject;
     myObject["sts"] = figner_web;
     myObject["id"] = freeIdFinger;
-    if ((figner_web == figner_ok) || (figner_web == figner_ok)) figner_web == figner_none;
+    if ((figner_web == figner_ok) || (figner_web == figner_err)) figner_web = figner_none;
     server.send(200, "text/json", JSON.stringify(myObject));
   });
   server.on("/delPhalanx", HTTP_GET, [](){
     if (!check_autch()) return;
     JSONVar myObject;
-    myObject["p"] = deleteFingerprint(atoi(server.arg("id").c_str()));
-    if ((figner_web == figner_ok) || (figner_web == figner_ok)) figner_web == figner_none;
-    server.send(200, "text/json", JSON.stringify(myObject));
+    if (figner_web != figner_start){
+      figner_web = figner_start;
+      myObject["p"] = deleteFingerprint(atoi(server.arg("id").c_str()));
+      figner_web = figner_none;
+      server.send(200, "text/json", JSON.stringify(myObject));
+    }else{
+      server.send(404, "text/plain", "Занято другими действиями!");
+    }
   });
   server.on("/delFingers", HTTP_GET, [](){
     if (!check_autch()) return;
     JSONVar myObject;
-    myObject["p"] = deleteAllFingerprint();
-    if ((figner_web == figner_ok) || (figner_web == figner_ok)) figner_web == figner_none;
-    server.send(200, "text/json", JSON.stringify(myObject));
+    if (figner_web != figner_start){
+      figner_web = figner_start;
+      myObject["p"] = deleteAllFingerprint();
+      figner_web = figner_none;
+      server.send(200, "text/json", JSON.stringify(myObject));
+    }else{
+      server.send(404, "text/plain", "Занято другими действиями!");
+    }
   });
   server.on("/val", HTTP_GET, [](){
     JSONVar myObject;
     timeval tv;
     gettimeofday(&tv, NULL);
-    if( xSemaphoreTake( Mutex_si_measure, 5000/portTICK_RATE_MS ) == pdTRUE ){
+    if( xSemaphoreTake( Mutex_si_measure, portMAX_DELAY ) == pdTRUE ){
       myObject["vol"]["temp"] = meas_si.temp;
       myObject["vol"]["hud"] = meas_si.humidi;
       myObject["tm"] = tv.tv_sec;

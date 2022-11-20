@@ -18,7 +18,7 @@ void init_temp_si(void){
 }
 
 void measuring(void){
-  if( xSemaphoreTake( Mutex_si_measure, 5000/portTICK_RATE_MS ) == pdTRUE ){
+  if( xSemaphoreTake( Mutex_si_measure, portMAX_DELAY ) == pdTRUE ){
     meas_si.temp = sensor.readTemperature();
     meas_si.humidi = sensor.readHumidity();
     xSemaphoreGive( Mutex_si_measure );;
