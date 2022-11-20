@@ -4,6 +4,8 @@
 #include "config.h"
 #include "Update.h"
 #include "finger.h"
+#include "SI7021.h"
+#include "times.h"
 
 extern wifi_lan_cnf conf_lan[2];
 extern esp_now_cnf conf_esp_now[2];
@@ -18,6 +20,7 @@ extern SemaphoreHandle_t Mutex_cnf_finger;
 extern SemaphoreHandle_t Mutex_cnf_now;
 extern SemaphoreHandle_t Mutex_value;
 extern SemaphoreHandle_t Mutex_file;
+extern SemaphoreHandle_t Mutex_si_measure;
 
 extern SemaphoreHandle_t openSemaphore;
 extern SemaphoreHandle_t addSemaphore;
@@ -469,20 +472,18 @@ void init_web(void){
     if ((figner_web == figner_ok) || (figner_web == figner_ok)) figner_web == figner_none;
     server.send(200, "text/json", JSON.stringify(myObject));
   });
-  // server.on("/val", HTTP_GET, [](){
-  //   JSONVar myObject;
-  //   if(( xSemaphoreTake( Mutex_cnf_station, 5000/portTICK_RATE_MS ) == pdTRUE )&&( xSemaphoreTake( Mutex_value, portMAX_DELAY ) == pdTRUE )){
-  //     for (uint8_t i = 0; i < MAXDEV; i++)
-  //     {
-  //       if (conf_station[0].devs[i].act){
-  //         myObject["vol"][i] = vals.volue[i];
-  //       }      
-  //     }
-  //     myObject["tm"] = vals.time;
-  //     xSemaphoreGive( Mutex_cnf_station );xSemaphoreGive( Mutex_value );
-  //   }
-  //   server.send(200, "text/json", JSON.stringify(myObject));
-  // });
+  server.on("/val", HTTP_GET, [](){
+    JSONVar myObject;
+    timeval tv;
+    gettimeofday(&tv, NULL);
+    if( xSemaphoreTake( Mutex_si_measure, 5000/portTICK_RATE_MS ) == pdTRUE ){
+      myObject["vol"]["temp"] = meas_si.temp;
+      myObject["vol"]["hud"] = meas_si.humidi;
+      myObject["tm"] = tv.tv_sec;
+      xSemaphoreGive( Mutex_si_measure );;
+    }
+    server.send(200, "text/json", JSON.stringify(myObject));
+  });
   server.on("/search_ap", HTTP_GET, [](){
     server.send(200, "text/plain", "Start search!");
     vTaskDelay(150);

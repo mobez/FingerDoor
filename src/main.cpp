@@ -25,6 +25,8 @@
 #include <SPIFFS.h>
 #endif
 
+#include "SI7021.h"
+
 // #define LED 2
 #define LED 5
 #define DOOR 32
@@ -45,6 +47,7 @@ SemaphoreHandle_t Mutex_cnf_now;
 SemaphoreHandle_t Mutex_value;
 SemaphoreHandle_t Mutex_file;
 SemaphoreHandle_t Mutex_send_now;
+SemaphoreHandle_t Mutex_si_measure;
 SemaphoreHandle_t sendSemaphore;
 SemaphoreHandle_t openSemaphore;
 SemaphoreHandle_t addSemaphore;
@@ -116,6 +119,7 @@ void setup() {
   Mutex_cnf_now = xSemaphoreCreateMutex();
   Mutex_value = xSemaphoreCreateMutex();
   Mutex_file = xSemaphoreCreateMutex();
+  Mutex_si_measure = xSemaphoreCreateMutex();
   timerSemaphore = xSemaphoreCreateBinary();
   sendSemaphore = xSemaphoreCreateBinary();
   openSemaphore = xSemaphoreCreateBinary();
@@ -129,6 +133,8 @@ void setup() {
   timerSemaphoreInt = xSemaphoreCreateBinary();
   dz.attach(1, gtm);
   times_init();
+  init_temp_si();
+  measuring();
 
   attachInterrupt(GPIOpin, getID, FALLING);
   // attachInterrupt(GPIOpin, getID, RISING);
@@ -149,7 +155,7 @@ void loop() {
 
 void sender(void * parameter){
   boolean act_fingther=false, fingther_ok=false;
-  uint8_t figner_web_cnt=0;
+  uint8_t figner_web_cnt=0, mesur_cnt=0;
   while(1){
     if (xSemaphoreTake(openSemaphore, 0) == pdTRUE){  
       opendoor();
@@ -187,6 +193,12 @@ void sender(void * parameter){
         }
       }else if (figner_web == figner_start){
         figner_web_cnt=0;
+      }
+      if (mesur_cnt >= 9){
+        measuring();
+        mesur_cnt=0;
+      }else{
+        mesur_cnt++;
       }
     }
     // if (!digitalRead(GPIOpin)){
