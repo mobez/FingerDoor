@@ -104,9 +104,9 @@ int getFingerprintIDez(void) {
   return finger.fingerID;
 }
 
-uint8_t getFingerprintEnroll(uint8_t id) { /*add new finger*/
+int getFingerprintEnroll(uint8_t id) { /*add new finger*/
   detachInterrupt(GPIOpin);
-  finger.LEDcontrol(FINGERPRINT_LED_BREATHING, 2000, FINGERPRINT_LED_PURPLE);
+  finger.LEDcontrol(FINGERPRINT_LED_BREATHING, 200, FINGERPRINT_LED_PURPLE);
   int p = -1;
   Serial.print("Waiting for valid finger to enroll as #"); Serial.println(id);
   while (p != FINGERPRINT_OK) {
@@ -131,7 +131,7 @@ uint8_t getFingerprintEnroll(uint8_t id) { /*add new finger*/
   }
   finger.LEDcontrol(FINGERPRINT_LED_FLASHING, 25, FINGERPRINT_LED_BLUE, 2);
   vTaskDelay(50);
-  finger.LEDcontrol(FINGERPRINT_LED_BREATHING, 2000, FINGERPRINT_LED_PURPLE);
+  finger.LEDcontrol(FINGERPRINT_LED_BREATHING, 200, FINGERPRINT_LED_PURPLE);
   // OK success!
 
   p = finger.image2Tz(1);
@@ -157,7 +157,7 @@ uint8_t getFingerprintEnroll(uint8_t id) { /*add new finger*/
   }
   finger.LEDcontrol(FINGERPRINT_LED_FLASHING, 25, FINGERPRINT_LED_BLUE, 2);
   vTaskDelay(50);
-  finger.LEDcontrol(FINGERPRINT_LED_BREATHING, 2000, FINGERPRINT_LED_PURPLE);
+  finger.LEDcontrol(FINGERPRINT_LED_BREATHING, 200, FINGERPRINT_LED_PURPLE);
 
   Serial.println("Remove finger");
   delay(2000);
@@ -190,7 +190,7 @@ uint8_t getFingerprintEnroll(uint8_t id) { /*add new finger*/
   }
   finger.LEDcontrol(FINGERPRINT_LED_FLASHING, 25, FINGERPRINT_LED_BLUE, 2);
   vTaskDelay(50);
-  finger.LEDcontrol(FINGERPRINT_LED_BREATHING, 2000, FINGERPRINT_LED_PURPLE);
+  finger.LEDcontrol(FINGERPRINT_LED_BREATHING, 200, FINGERPRINT_LED_PURPLE);
 
   // OK success!
 
@@ -217,7 +217,7 @@ uint8_t getFingerprintEnroll(uint8_t id) { /*add new finger*/
   }
   finger.LEDcontrol(FINGERPRINT_LED_FLASHING, 25, FINGERPRINT_LED_BLUE, 2);
   vTaskDelay(50);
-  finger.LEDcontrol(FINGERPRINT_LED_BREATHING, 2000, FINGERPRINT_LED_PURPLE);
+  finger.LEDcontrol(FINGERPRINT_LED_BREATHING, 200, FINGERPRINT_LED_PURPLE);
 
   // OK converted!
   Serial.print("Creating model for #");  Serial.println(id);
@@ -237,7 +237,7 @@ uint8_t getFingerprintEnroll(uint8_t id) { /*add new finger*/
   }
   finger.LEDcontrol(FINGERPRINT_LED_FLASHING, 25, FINGERPRINT_LED_BLUE, 2);
   vTaskDelay(50);
-  finger.LEDcontrol(FINGERPRINT_LED_BREATHING, 2000, FINGERPRINT_LED_PURPLE);
+  finger.LEDcontrol(FINGERPRINT_LED_BREATHING, 200, FINGERPRINT_LED_PURPLE);
 
   Serial.print("ID "); Serial.println(id);
   p = finger.storeModel(id);
@@ -260,13 +260,14 @@ uint8_t getFingerprintEnroll(uint8_t id) { /*add new finger*/
   return p;
 }
 
-uint8_t deleteFingerprint(uint8_t id) {
-  uint8_t p = -1;
+int deleteFingerprint(uint8_t id) {
+  int p = -1;
 
   p = finger.deleteModel(id);
 
   if (p == FINGERPRINT_OK) {
     Serial.println("Deleted!");
+    conf_finger[0][id-1].act =  false;
   } else if (p == FINGERPRINT_PACKETRECIEVEERR) {
     Serial.println("Communication error");
   } else if (p == FINGERPRINT_BADLOCATION) {
@@ -279,13 +280,17 @@ uint8_t deleteFingerprint(uint8_t id) {
 
   return p;
 }
-uint8_t deleteAllFingerprint(void) {
-  uint8_t p = -1;
+int deleteAllFingerprint(void) {
+  int p = -1;
 
   p = finger.emptyDatabase();
 
   if (p == FINGERPRINT_OK) {
     Serial.println("Deleted!");
+    for (uint8_t i = 0; i < MAXFINGER; i++)
+    {
+      conf_finger[0][i].act =  false;
+    }
   } else if (p == FINGERPRINT_PACKETRECIEVEERR) {
     Serial.println("Communication error");
   } else if (p == FINGERPRINT_BADLOCATION) {
@@ -319,6 +324,6 @@ void test_led(void){
   delay(2000);
   finger.LEDcontrol(FINGERPRINT_LED_OFF, 0, FINGERPRINT_LED_PURPLE);
   delay(2000);
-  finger.LEDcontrol(FINGERPRINT_LED_BREATHING, 2000, FINGERPRINT_LED_PURPLE);
+  finger.LEDcontrol(FINGERPRINT_LED_BREATHING, 200, FINGERPRINT_LED_PURPLE);
 }
 

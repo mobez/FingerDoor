@@ -4,7 +4,7 @@ let title;
 let get_v = false;
 let b_jn, id_p, timerId=null;
 let act_m=-1;
-let stat_jn,sp_d=[],sp_err;
+let stat_jn,sp_t,sp_h,sp_err;
 let servers=[];
 let devs=[];
 let con_lan={};
@@ -12,14 +12,9 @@ let serv_id=-1;
 let dev_id=0;
 let now_j, act_j;
 let peer_add={};
-const start = "<div class=title_s><span class=txt_s>Быстрый старт. </span><span class=txt_s>Настройка платы приема измерений.</span></div><div class=in_s><input class=inp_hid id=fl_i type=file name=fl_i onchange=sh_cnf(this) accept=\".json\"><label for=fl_i class=\"btn_s pr\"><span>Применить конф</span></label> <input class=\"btn_s nx\"id=btn_go type=button value=Начать></div>";
-const start_1 = "<div class=title_s><span class=txt_s>Быстрый старт </span><span class=txt_s>Настройка сети</span></div><div class=form_l id=frm></div><div class=in_s><input class=btn_s id=btn_n type=button value=Далее></div>";
-const start_2 = "<div class=title_s><span class=txt_s>Быстрый старт </span><span class=txt_s>Настройка ESP-NOW</span></div><div class=form_l id=frm></div><div class=in_s><input class=\"btn_s pr\"id=btn_p type=button value=Назад><input class=\"btn_s nx\"id=btn_n type=button value=Далее></div>";
-const start_3 = "<div class=title_s><span class=txt_s>Быстрый старт </span><span class=txt_s>Настройка времени</span></div><div class=form_l id=frm></div><div class=in_s><input class=\"btn_s pr\"id=btn_p type=button value=Назад><input class=\"btn_s nx\"id=btn_n type=button value=Далее></div>";
-const start_4 = "<div class=title_s><span class=txt_s>Быстрый старт </span><span class=txt_s>Настройка серверов</span></div><div class=form_l id=frm></div><div class=in_s><input class=\"btn_s pr\"id=btn_p type=button value=Назад><input class=\"btn_s nx\"id=btn_n type=button value=Далее></div>";
-const start_5 = "<div class=title_s><span class=txt_s>Быстрый старт </span><span class=txt_s>Настройка станции</span></div><div class=form_l id=frm></div><div class=in_s><input class=\"btn_s pr\"id=btn_p type=button value=Назад><input class=\"btn_s nx\"id=btn_n type=button value=Готово></div>";
-const volh = "<div class=title_s><span class=txt_s>Значения</span></div><div class=form_l id=frm></div><div class=in_s><input class=btn_s id=btn_v type=button value=Обновить></div><div class=in_s><input class=btn_s id=btn_res type=button value=Перезагрузить> <input class=inp_hid id=fl_i type=file accept=.json name=fl_i onchange=sh_cnf(this)><label class=\"btn_s pr\"for=fl_i><span>Применить конф</span></label> <input class=btn_s id=btn_gcnf type=button value=\"Скачать конф\"></div>";
-const lan = "<div class=form_k><span class=f_s>Wifi</span> <select class=\"f_i t_s\"id=i_l_w type=text><option value=1>Точка доступа<option value=2>Клиент<option value=3>Точка доступа и клиент</select></div><div class=form_k><span class=f_s>Имя</span> <input class=\"f_i t_s\"id=i_l_n placeholder=Имя></div><div class=form_k><span class=f_s>Пароль</span> <input class=\"f_i t_s\"id=i_l_p placeholder=Пароль type=password></div><div class=form_k><span class=f_s>Точка доступа</span> <input class=\"f_i t_s\"id=i_l_n_r placeholder=\"Точка доступа(Роутер)\"></div><div class=form_k><span class=f_s>Пароль точки</span> <input class=\"f_i t_s\"id=i_l_p_r placeholder=\"Пароль точки\"type=password></div><div class=form_k><span class=f_s>Логин</span> <input class=\"f_i t_s\"id=i_l_l placeholder=\"Точка доступа\"title=\"Доступ по web\"></div><div class=\"form_k nw_h\"><span class=f_s>Старый пароль</span> <input class=\"f_i t_s\"id=i_l_p_lo placeholder=Пароль type=password></div><div class=form_k><span class=f_s>Пароль</span> <input class=\"f_i t_s\"id=i_l_p_l placeholder=Пароль type=password></div><div class=form_k><span class=f_s>Статический IP</span> <input class=chb id=chb_s_i type=checkbox value=1> <label class=\"f_i ch\"for=chb_s_i id=ch_s_i></label></div><div class=form_k><span class=f_s>IP адрес</span> <input class=\"f_i t_s\"id=i_l_s_i placeholder=\"IP адрес\"></div><div class=form_k><span class=f_s>Шлюз</span> <input class=\"f_i t_s\"id=i_l_s_g placeholder=Шлюз></div><div class=form_k><span class=f_s>Маска сети</span> <input class=\"f_i t_s\"id=i_l_s_m placeholder=\"Маска сети\"></div><div class=form_k><span class=f_s>DNS1</span> <input class=\"f_i t_s\"id=i_l_s_d1 placeholder=DNS1></div><div class=form_k><span class=f_s>DNS2</span> <input class=\"f_i t_s\"id=i_l_s_d2 placeholder=DNS2></div>";
+const phalanxs = ["Большой", "Средний", "Указательный", "Безымянный", "Мизинец"];
+const volh = "<div class=title_s><span class=txt_s>Значения</span></div><div class=form_l id=frm><div class=form_k><span class=\"err ev\"id=ev_err></span></div><div class=form_k><span class=\"f_s nv\">Температура:</span><span class=f_v id=ev_tmp></span></div><div class=form_k><span class=\"f_s nv\">Влажность:</span><span class=f_v id=ev_hud></span></div></div><div class=in_s><input class=btn_s id=btn_v type=button value=Обновить><input class=btn_s id=btn_od type=button value=Открыть></div><div class=in_s><input class=btn_s id=btn_res type=button value=Перезагрузить> <input class=inp_hid id=fl_i type=file accept=.json name=fl_i onchange=sh_cnf(this)><label class=\"btn_s pr\"for=fl_i><span>Применить конф</span></label> <input class=btn_s id=btn_gcnf type=button value=\"Скачать конф\"></div>";
+const lan = "<div class=form_k><span class=f_s>Wifi</span> <select class=\"f_i t_s\"id=i_l_w type=text><option value=1>Точка доступа<option value=2>Клиент<option value=3>Точка доступа и клиент</select></div><div class=form_k><span class=f_s>Имя</span> <input class=\"f_i t_s\"id=i_l_n placeholder=Имя></div><div class=form_k><span class=f_s>Пароль</span> <input class=\"f_i t_s\"id=i_l_p placeholder=Пароль type=password></div><div class=form_k><span class=f_s>Точка доступа</span> <input class=\"f_i t_s\"id=i_l_n_r placeholder=\"Точка доступа(Роутер)\"></div><div class=form_k><span class=f_s>Пароль точки</span> <input class=\"f_i t_s\"id=i_l_p_r placeholder=\"Пароль точки\"type=password></div><div class=form_k><span class=f_s>Логин</span> <input class=\"f_i t_s\"id=i_l_l placeholder=\"Точка доступа\"title=\"Доступ по web\"></div><div class=\"form_k nw_h\"><span class=f_s>Старый пароль</span> <input class=\"f_i t_s\"id=i_l_p_lo placeholder=Пароль type=password></div><div class=form_k><span class=f_s>Пароль</span> <input class=\"f_i t_s\"id=i_l_p_l placeholder=Пароль type=password></div>";
 const lan_r = "<div class=title_s><span class=txt_s>Настройка сети</span></div><div class=form_l id=frm></div><div class=in_s><input class=btn_s id=btn_sv type=button value=Сохранить></div>";
 const now_r = "<div class=title_s><span class=txt_s>Настройка ESP-NOW</span></div><div class=form_l id=frm></div><div class=in_s><input class=btn_s id=btn_sv type=button value=Сохранить></div><div class=title_s><span class=txt_s>Активные пиры</span></div><div class=form_l id=frmp_a><table class=peer id=tbp_a><tbody id=peer_act><tr><th>MAC<th></table></div><div class=title_s><span class=txt_s>Настройка пиров</span></div><div class=form_l id=frmp><table class=peer id=tbp><tbody id=peer><tr><th>Имя<th>MAC<th>Удалить<th>Настроить</table><div class=in_s><input class=\"t_s btn_a\"id=btn_avp type=button value=Добавить></div></div><div class=ovrl id=pop><div class=pop id=popn><fieldset class=fiel><legend class=lgndf id=lgn>Точки доступа</legend><table class=ap id=tbl><tbody id=ap><tr><th>Имя<th>Сигнал<th>MAC<th>Канал<th>Hide</table></fieldset><div class=in_s><input class=btn_s id=btn_ps type=button value=Сканировать></div></div></div><div class=ovrl id=pop2><div class=pop id=popn2><fieldset class=fiel><legend class=lgndf id=lgn_r>Настрайка для приема</legend><div class=form_k><span class=f_s>Тип</span> <span class=\"f_i t_s\"id=i_n_n_p></span></div><div class=form_k><span class=f_s>Наименование</span> <input class=\"f_i t_s\"id=i_n_l_p placeholder=Наименование></div><div class=form_k><span class=f_s>Начальный id изм</span> <select class=\"f_i t_s\"id=i_n_i_p type=text></select></div><div class=form_k><span class=f_s>Кол-во изм</span> <select class=\"f_i t_s\"id=i_n_c_p type=text></select></div><div class=form_k><span class=f_s>Автоизмерение</span> <input class=chb id=chb_s_a type=checkbox> <label class=\"f_i ch\"for=chb_s_a id=ch_p_m></label></div></fieldset><div class=in_s><input class=btn_s id=btn_psp type=button value=Сохранить></div><fieldset class=fiel><legend class=lgndf id=lgn_r>Настрайка устройства</legend><div class=form_k><span class=f_s>Wifi</span> <input class=chb id=chb_s_w type=checkbox value=2> <label class=\"f_i ch\"for=chb_s_w id=ch_p_w></label></div><div class=form_k><span class=f_s>Bluetooth</span> <input class=chb id=chb_s_b type=checkbox value=3> <label class=\"f_i ch\"for=chb_s_b id=ch_p_b></label></div></fieldset><div class=in_s><input class=btn_s id=btn_psn type=button value=Сохранить> <input class=btn_s id=btn_prn type=button value=Reboot></div><div class=title_s><span class=txt_s>Пиры устройства</span></div><table class=peer id=tbp_p><tbody id=peer_pdev><tr><th>MAC<th>Channel<th></table><div class=in_s><input class=btn_s id=btn_clr type=button value=Очистить></div></div></div>";
 const now_1 = "<div class=form_k><span class=f_s>Канал</span> <select class=\"f_i t_s\"id=i_n_k type=text><option value=1>1<option value=2>2<option value=3>3<option value=4>4<option value=5>5<option value=6>6<option value=7>7<option value=8>8<option value=9>9<option value=10>10<option value=11>11<option value=12>12<option value=13>13</select></div>";
@@ -27,8 +22,8 @@ const timh = "<div class=form_k><span class=f_s>Сервер времени 1</s
 const tim_r = "<div class=title_s><span class=txt_s>Настройка времени</span></div><div class=form_l id=frm></div><div class=in_s><input class=btn_s id=btn_sv type=button value=Сохранить></div>";
 const serv_r = "<div class=title_s><span class=txt_s>Настройка сервера приема</span></div><div class=form_l id=frm></div><div class=in_s><input class=btn_s id=btn_sv type=button value=Сохранить></div>";
 const servh = "<div class=t_pl><div class=cnt_t><table class=ap id=el_t><tr><th>Серверы</table></div><div class=cnf_t><span class=txt_t id=n_tt></span><div class=form_k><span class=f_s>Использовать</span> <input class=chb id=chb_s type=checkbox value=1> <label class=\"f_i ch\"for=chb_s id=ch_s></label></div><div class=form_k><span class=f_s>Хост </span><input class=\"f_i t_s\"id=i_s_ph placeholder=\"Адрес сервера\"></div><div class=form_k><span class=f_s>Порт </span><input class=\"f_i t_s\"id=i_s_pp placeholder=Порт step=1 type=number></div><input class=btn_s id=btn_spv type=button value=Применить></div></div>";
-const stan_r = "<div class=title_s><span class=txt_s>Настройка станции</span></div><div class=form_l id=frm></div><div class=in_s><input class=btn_s id=btn_sv type=button value=Сохранить></div>";
-const stanh = "<div class=form_k><span class=f_s>Индекс станции</span> <input class=\"f_i t_s\"id=i_e_i placeholder=\"Индекс станции\"step=1 type=number></div><br><div class=t_pl><div class=cnt_t><table class=ap id=el_t><tr><th>Элементы</table></div><div class=cnf_t><span class=txt_t id=n_tt></span><div class=form_k><span class=f_s>Использовать</span> <input class=chb id=chb_e type=checkbox value=1> <label class=\"f_i ch\"for=chb_e id=ch_e></label></div><div class=form_k><span class=f_s>Наименование </span><input class=\"f_i t_s\"id=i_e_n placeholder=\"Наименование элемента\"></div><div class=form_k><span class=f_s>Еденица измерения </span><input class=\"f_i t_s\"id=i_e_ni placeholder=\"Наименование еденицы измерения\"></div><div class=form_k><span class=f_s>Знаков после запятой</span> <select class=\"f_i t_s\"id=i_n_d type=text><option value=0>0<option value=1>1<option value=2>2<option value=3>3<option value=4>4</select></div><div class=form_k><span class=f_s>Индекс типа </span><input class=\"f_i t_s\"id=i_e_ti placeholder=\"Индекс типа\"step=1 type=number></div><div class=form_k><span class=f_s>Индекс подтипа </span><input class=\"f_i t_s\"id=i_e_tpi placeholder=\"Индекс подтипа\"step=1 type=number></div><input class=btn_s id=btn_spv type=button value=Применить></div></div>";
+const stan_r = "<div class=title_s><span class=txt_s>Настройка отпечатков</span></div><div class=form_l id=frm></div><div class=in_s><input class=btn_s id=btn_sad type=button value=Добавить><input class=btn_s id=btn_srem type=button value=Очистить><input class=btn_s id=btn_sv type=button value=Сохранить></div>";
+const stanh = "<div class=t_pl><div class=cnt_t><table class=ap id=el_t><tr><th>Отпечатки</table></div><div class=cnf_t><span class=txt_t id=n_tt></span><div class=form_k><span class=f_s>Использовать</span> <input class=chb id=chb_e type=checkbox value=1> <label class=\"f_i ch\"for=chb_e id=ch_e></label></div><div class=form_k><span class=f_s>Наименование </span><input class=\"f_i t_s\"id=i_e_n placeholder=\"Наименование элемента\"></div><div class=form_k><span class=f_s></div><div class=form_k><span class=f_s>Палец</span> <select class=\"f_i t_s\"id=i_n_d type=text><option value=0>Большой палец<option value=1>Указательный палец<option value=2>Средний палец<option value=3>Безымянный палец<option value=4>Мизинец</select></div><input class=btn_s id=btn_spv type=button value=Применить><input class=btn_s id=btn_spr type=button value=Удалить></div></div>";
 const re_val = 30000;
 const max_re_sts=30;
 
@@ -202,12 +197,6 @@ async function send_val(pp, alrt = true, cb=null){
 						con_lan.route = false;
 						con_lan.softap = false;
 					};
-					con_lan.static_ip = get_el("chb_s_i").checked;
-					con_lan.local_ip = get_el("i_l_s_i").value;
-					con_lan.gateway = get_el("i_l_s_g").value;
-					con_lan.subnet = get_el("i_l_s_m").value;
-					con_lan.dns1 = get_el("i_l_s_d1").value;
-					con_lan.dns2 = get_el("i_l_s_d2").value;
 					let res = await fetch('/set_lan', {
 			      method: 'POST',
 			      headers: {
@@ -231,47 +220,30 @@ async function send_val(pp, alrt = true, cb=null){
 				}
 			break;
 			case 3:
-				if (now_j.new_dev){
-					fD.append("channel", get_el("i_n_k").value);
-					fetch('/set_now', {
-			      method: 'POST',
-			      body: fD
-			    }).then(function(res){
-				    if(res.status == 200){
-				    	if (alrt) alert("esp-now удачно сохранено!");
-				    	snd = true;
-				    	if (cb) cb();
-				    }else{
-				    	alert("Что-то пошло не так!");
-				    	snd = false;
-				    };
-				  });
-			  }else{
-			  	now_j.channel=Number(get_el("i_n_k").value);
-			  	const b_js = {...now_j};
-			  	delete b_js.my_mac;
-			  	for (let i = 0; i < now_j.max_peer; i++) {
-			  		delete b_js.peers[i].rem;
-			  		delete b_js.peers[i].cnf;
-			  		delete b_js.peers[i].name;
-			  	}
-			  	fetch('/set_now', {
-			      method: 'POST',
-			      headers: {
-					    'Content-Type': 'application/json;charset=utf-8'
-					  },
-			      body: JSON.stringify(b_js)
-			    }).then(function(res){
-				    if(res.status == 200){
-				    	if (alrt) alert("Серверы удачно сохранены!");
-				    	snd = true;
-				    	if (cb) cb();
-				    }else{
-				    	alert("Что-то пошло не так!");
-				    	snd = false;
-				    };
-				  });
-			  }
+        now_j.channel=Number(get_el("i_n_k").value);
+        const b_js = {...now_j};
+        delete b_js.my_mac;
+        for (let i = 0; i < now_j.max_peer; i++) {
+          delete b_js.peers[i].rem;
+          delete b_js.peers[i].cnf;
+          delete b_js.peers[i].name;
+        }
+        fetch('/set_now', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json;charset=utf-8'
+          },
+          body: JSON.stringify(b_js)
+        }).then(function(res){
+          if(res.status == 200){
+            if (alrt) alert("Серверы удачно сохранены!");
+            snd = true;
+            if (cb) cb();
+          }else{
+            alert("Что-то пошло не так!");
+            snd = false;
+          };
+        });
 			break;
 			case 4:
 				fD.append("ntpServer1", get_el("i_t_s1").value);
@@ -313,14 +285,12 @@ async function send_val(pp, alrt = true, cb=null){
 			break;
 			case 6:
 				if (dev_id >= 0)dev_up();
-				let snds = {index: Number(get_el("i_e_i").value), devs: []};
-				snds.devs = devs; 
-				fetch('/set_station', {
+				fetch('/set_fingers', {
 		      method: 'POST',
 		      headers: {
 				    'Content-Type': 'application/json;charset=utf-8'
 				  },
-		      body: JSON.stringify(snds)
+		      body: JSON.stringify(devs)
 		    }).then(function(res){
 			    if(res.status == 200){
 			    	if (alrt) alert("Станция удачно сохранена!");
@@ -449,20 +419,14 @@ function serv_cnf(id){
 function dev_up(){
 	devs[dev_id].act = get_el("chb_e").checked;
 	devs[dev_id].name = get_el("i_e_n").value;
-	devs[dev_id].v_name = get_el("i_e_ni").value;
-	devs[dev_id].dec = Number(get_el("i_n_d").value);
-	devs[dev_id].type = Number(get_el("i_e_ti").value);
-	devs[dev_id].type_last = Number(get_el("i_e_tpi").value);
+	devs[dev_id].phalanx = Number(get_el("i_n_d").value);
 }
 function dev_cnf(id){
 	if (dev_id >= 0)dev_up();
-	get_el("n_tt").innerHTML = "Элемент "+(Number(id)+1);
+	get_el("n_tt").innerHTML = "Отпечаток "+(Number(id)+1);
 	get_el("chb_e").checked = devs[id].act;
 	get_el("i_e_n").value = devs[id].name;
-	get_el("i_e_ni").value = devs[id].v_name;
-	get_el("i_n_d").value = devs[id].dec;
-	get_el("i_e_ti").value = devs[id].type;
-	get_el("i_e_tpi").value = devs[id].type_last;
+	get_el("i_n_d").value = devs[id].phalanx;
 	dev_id=id;
 }
 function sts_fetch(id){
@@ -842,12 +806,6 @@ async function set_val(pp) {
 					}else{
 						wf.value = 0;
 					};
-					get_el("chb_s_i").checked = con_lan.static_ip;
-					get_el("i_l_s_i").value = con_lan.local_ip;
-					get_el("i_l_s_g").value = con_lan.gateway;
-					get_el("i_l_s_m").value = con_lan.subnet;
-					get_el("i_l_s_d1").value = con_lan.dns1;
-					get_el("i_l_s_d2").value = con_lan.dns2;
 				};
 			} catch (error) {
 			  console.log(error.message);
@@ -941,14 +899,15 @@ async function set_val(pp) {
 				const res = await fetch("/val");
 				if (res.ok){
 					const vl = await res.json();
-					let len_v = vl.vol.length<stat_jn.devs.length?vl.vol.length:stat_jn.devs.length;
+          
 					if (!vl.tm){
-						sp_err.innerHTML = "Данные еще не поступали!";
+						sp_err.innerHTML = "Время не синхронизировано!";
 						sp_err.classList.toggle("err",true);
 					}else{
 						let time = vl.tm * 1000;
 						const date = Number(new Date());
-						if ((date-900000) > time){
+						let dt = new Date(time);
+						if ((date-30000) > time){
 							let ot = Math.floor((date - time)/60000);
 							let he="";
 							if (ot > 59){
@@ -960,25 +919,24 @@ async function set_val(pp) {
 								else strH = " часов";
 
 								if ((mo < 2)||(mo > 20 && (mo % 10) < 2 && (mo % 10) > 0)) strM = " минуту";
-								else if((mo < 5)||(mo > 20 && (mo % 10) < 5 && (mo % 10) > 0)) strM = " минуты";
+								else if((mo < 5)||(mo > 20 && ((mo % 10) < 5) && ((mo % 10) > 0))) strM = " минуты";
 								else strM = " минут";
 								if (mo>0)sMM=" "+mo+strM;
 								he = ho+strH+sMM;
 							}else{
-								he = ot+" минут!";
+                if ((ot < 2)||(ot > 20 && (ot % 10) < 2 && (ot % 10) > 0)) strM = " минуту";
+								else if((ot < 5)||(ot > 20 && ((ot % 10) < 5) && ((ot % 10) > 0))) strM = " минуты";
+								else strM = " минут";
+								he = ot+strM+"!";
 							}
-							sp_err.innerHTML = "Данные не поступают "+he;
+							sp_err.innerHTML = "Время отстает на "+he+" ("+(dt.getHours()<10?"0":"")+dt.getHours()+":"+(dt.getMinutes()<10?"0":"")+dt.getMinutes()+")";
 							sp_err.classList.toggle("err",true);
 						}else{
-							let dt = new Date(time);
-							sp_err.innerHTML = "Данные за "+(dt.getHours()<10?"0":"")+dt.getHours()+":"+(dt.getMinutes()<10?"0":"")+dt.getMinutes();
+							sp_err.innerHTML = "Время "+(dt.getHours()<10?"0":"")+dt.getHours()+":"+(dt.getMinutes()<10?"0":"")+dt.getMinutes();
 							sp_err.classList.toggle("err",false);
 						};
-						for (let i = 0; i < len_v; i++) {
-							if (stat_jn.devs[i].act){
-								sp_d[i].innerHTML=vl.vol[i].toFixed(stat_jn.devs[i].dec)+stat_jn.devs[i].v_name;
-							};
-						};						
+            sp_t.innerHTML = vl.vol.temp.toFixed(2)+"°C";
+            sp_h.innerHTML = vl.vol.hud.toFixed(0)+"%";					
 					};
 				};
 				if (timerId){
@@ -1023,24 +981,27 @@ async function set_val(pp) {
 		break;
 		case 6:
 			try {
-				const res = await fetch("/station.json");
+				const res = await fetch("/finger.json");
 				if (res.ok){
 					const vl = await res.json();
-					get_el("i_e_i").value = vl.index;
 					let tbl=get_el("el_t");
 					let tr, td;
 					while (tbl.rows.length>1) {
 					  tbl.deleteRow(1);
 					};
 					devs.length = 0;
-					for (let i = 0; i < vl.devs.length; i++) {
+					for (let i = 0; i < vl.length; i++) {
 						tr=ce("tr");
 						se(tbl, 0, tr);
 						td=tr.insertCell(0);
-						td.innerHTML = "Элемент "+(i+1);
+            if (vl[i].act && vl[i].name.length){
+              td.innerHTML = vl[i].name + "("+phalanxs[vl[i].phalanx]+")";
+            }else{
+              td.innerHTML = "Отпечаток "+(i+1);
+            }						
 						td.setAttribute("onclick", "dev_cnf('"+i+"')");
 						tr.classList.add("hov");
-						devs.push(vl.devs[i]);
+						devs.push(vl[i]);
 					};
 					dev_cnf(0);
 				};
@@ -1178,39 +1139,17 @@ async function go_pg(pg, frm = "", pp = 0, ftch=false) {
 			get_el("btn_res").onclick = () => {
 				fetch("/res", {
 					method: "PUT"
-				}).then(()=>{alert("Перезагрузка!");});
+				}).then(res => res.text()).then(txt=>{alert(txt);});
 			};
-			get_el("btn_sts").classList.add("act");
-			fetch("/station.json").then(res => res.json())
-			.then(tt => {
-				stat_jn=tt;
-				let frm_v = get_el("frm");
-				let div_v, sn_v_n, sn_v_v;
-				div_v=ce("div");
-				div_v.classList.add("form_k");
-				sp_err=ce("span");
-				sp_err.classList.add("ev");
-				se(frm_v,0,div_v);
-				se(div_v,0,sp_err);
-				for (let i = 0; i < stat_jn.devs.length; i++) {
-					if (stat_jn.devs[i].act){
-						div_v=ce("div");
-						div_v.classList.add("form_k");
-						sn_v_n=ce("span");
-						sn_v_n.innerHTML=stat_jn.devs[i].name+":";
-						sn_v_n.classList.add("f_s");
-						sn_v_n.classList.add("nv");
-						sn_v_v=ce("span");
-						sn_v_v.innerHTML="0"+stat_jn.devs[i].v_name;
-						sn_v_v.classList.add("f_v");
-						sp_d[i]=sn_v_v;
-						se(frm_v,0,div_v);
-						se(div_v,0,sn_v_n);
-						se(div_v,0,sn_v_v);
-					};
-				};
-				set_val(4);
-			});				
+			get_el("btn_od").onclick = () => {
+				fetch("/open", {
+					method: "PUT"
+				}).then(res => res.text()).then(txt=>{alert(txt);});
+			};
+      sp_err = document.getElementById("ev_err");
+      sp_t = document.getElementById("ev_tmp");
+      sp_h = document.getElementById("ev_hud");
+			set_val(4);				
 		break;
 		case 56:
 			let opt = ce("option");
@@ -1398,13 +1337,8 @@ async function init_p(json) {
 	title = get_el("ttl");
 	main = get_el("main");
 	now_j = {...json};
-	if (now_j.new_dev){
-		main.innerHTML = start;
-		set_cl("btn_go", 6, true);
-	}else{
-		title.style.display = "block";
-		go_pg(volh, "", 54);
-	};
+  title.style.display = "block";
+  go_pg(volh, "", 54);
 }
 
 

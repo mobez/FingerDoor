@@ -78,6 +78,16 @@ void defconfig(void) {
     conf_server[0].serv[2].act = false;
     xSemaphoreGive( Mutex_cnf_server );
   }
+  if( xSemaphoreTake( Mutex_cnf_finger, portMAX_DELAY ) == pdTRUE ){
+    for (uint8_t i = 0; i < MAXFINGER; i++)
+    {
+      conf_finger[0][i].act =  false;
+      conf_finger[0][i].id = i+1;
+      conf_finger[0][i].name[0] = 0;
+      conf_finger[0][i].phalanx = thumb;
+    }
+    xSemaphoreGive( Mutex_cnf_finger );
+  }
 }
 
 bool saveconfig(conf_type type) {

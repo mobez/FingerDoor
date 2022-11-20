@@ -433,9 +433,9 @@ void init_web(void){
     }
     server.send(200, "text/json", JSON.stringify(myObject));
   });
-  server.on("/open", HTTP_GET, [](){
+  server.on("/open", HTTP_PUT, [](){
     xSemaphoreGiveFromISR(openSemaphore, NULL);
-    server.send(200, "text/plain", "Door open!");
+    server.send(200, "text/plain", "Калитка открыта!");
   });
   server.on("/addPhalanx", HTTP_POST, [](){
     if (!check_autch()) return;
@@ -508,7 +508,7 @@ void init_web(void){
   });
   server.on("/res", HTTP_PUT, [](){ /* fetch("/res",{method: "PUT"}); */
     if (!check_autch()) return;
-    server.send(200, "text/plain", "Reboot!");
+    server.send(200, "text/plain", "Перезагрузка!");
     vTaskDelay(50);
     ESP.restart();
   });

@@ -223,9 +223,9 @@ body{
 .ap td, .ap, .peer td, .peer{
 	border:1px solid #034e6c;
 }
-.ap td., .ap th, .peer td, .peer th{
+/* .ap td., .ap th, .peer td, .peer th{
 	font-size: 0.55em;
-}
+} */
 .peer {
 	width: 90%;
 	margin: 0 auto;
@@ -241,6 +241,8 @@ body{
 }
 .cnt_t{
 	width: 30%;
+	max-height: 80vh;
+    overflow: auto;
 }
 .cnf_t{
 	width: 80%;
@@ -261,7 +263,7 @@ body{
 	color: #e31313;
     font-weight: 900;
 }
-#btn_spv{
+#btn_spv, #btn_spd{
 	font-size: 0.9em;
 }
 #el_t{
@@ -288,7 +290,7 @@ body{
 	.f_s, .f_i, .f_d, .btn_s, .men_btn, .f_b, .t_s, .f_er, .ev{
 		font-size: 0.85em;
 	}
-	#btn_spv{
+	#btn_spv, #btn_spd{
 		font-size: 0.8em;
 		padding: 0.3em 1em;
 	}
@@ -297,7 +299,7 @@ body{
 		padding-right: 0.3em;
 	}
 	.ap tr, .peer tr{
-		font-size: 0.75em;
+		font-size: 0.65em;
 	}
 	.ap th, .peer th{
 		padding: 0.3em 0;

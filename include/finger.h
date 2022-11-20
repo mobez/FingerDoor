@@ -17,9 +17,9 @@ extern Adafruit_Fingerprint finger;
 int add_phalanx(void);
 uint8_t getFingerprintID(void);
 int getFingerprintIDez(void);
-uint8_t getFingerprintEnroll(uint8_t id);
-uint8_t deleteFingerprint(uint8_t id);
-uint8_t deleteAllFingerprint(void);
+int getFingerprintEnroll(uint8_t id);
+int deleteFingerprint(uint8_t id);
+int deleteAllFingerprint(void);
 void test_led(void);
 
 #endif /* FINGER_H_ */
