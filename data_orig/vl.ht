@@ -1,0 +1,8 @@
+<div class="form_k">
+	<span class="f_s nv">Температура:</span>
+	<span class="f_v" id="v_t">0.0°C</span>
+</div>
+<div class="form_k">
+	<span class="f_s nv">Радиация:</span>
+	<span class="f_v" id="v_d">0.0мкЗв/ч</span>
+</div>

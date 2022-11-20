@@ -1,0 +1,22 @@
+[
+	{"act":true,"cnf_id":0,"mac_addr":[123,254,85,12,75,145]}
+	,{"act":true,"cnf_id":-1,"mac_addr":[123,186,85,12,20,145]}
+	,{"act":true,"cnf_id":-1,"mac_addr":[123,254,85,12,75,145]}
+	,{"act":true,"cnf_id":-1,"mac_addr":[123,254,85,12,75,145]}
+	,{"act":true,"cnf_id":-1,"mac_addr":[123,254,85,12,75,145]}
+	,{"act":true,"cnf_id":-1,"mac_addr":[123,254,85,12,75,145]}
+	,{"act":true,"cnf_id":-1,"mac_addr":[123,254,85,12,75,145]}
+	,{"act":true,"cnf_id":-1,"mac_addr":[123,254,85,12,75,145]}
+	,{"act":true,"cnf_id":1,"mac_addr":[145,123,75,85,254,12]}
+	,{"act":true,"cnf_id":-1,"mac_addr":[123,254,85,12,75,145]}
+	,{"act":true,"cnf_id":-1,"mac_addr":[123,254,85,12,75,145]}
+	,{"act":true,"cnf_id":-1,"mac_addr":[123,254,85,12,75,145]}
+	,{"act":true,"cnf_id":-1,"mac_addr":[123,254,85,12,75,145]}
+	,{"act":true,"cnf_id":-1,"mac_addr":[123,254,85,12,75,145]}
+	,{"act":true,"cnf_id":-1,"mac_addr":[123,254,85,12,75,145]}
+	,{"act":true,"cnf_id":-1,"mac_addr":[123,254,85,12,75,145]}
+	,{"act":true,"cnf_id":-1,"mac_addr":[123,254,85,12,75,145]}
+	,{"act":true,"cnf_id":-1,"mac_addr":[123,254,85,12,75,145]}
+	,{"act":true,"cnf_id":-1,"mac_addr":[123,254,85,12,75,145]}
+	,{"act":true,"cnf_id":-1,"mac_addr":[123,254,85,12,75,145]}
+]

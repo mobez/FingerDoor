@@ -1,0 +1,62 @@
+<div class="form_k">
+	<span class="f_s">Индекс станции</span>
+	<input type="number" step="1" class="f_i t_s" id="i_e_i" placeholder="Индекс станции">
+</div></br>
+<div class="t_pl">
+	<div class="cnt_t">
+		<table class = "ap" id="el_t">
+			<tbody>
+				<tr>
+					<th>Элементы</th>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<div class="cnf_t">
+		<span class="txt_t" id="n_tt"></span>
+		<div class="form_k">
+			<span class="f_s">Использовать</span>
+			<input type="checkbox" class="chb" id="chb_e" value="1">
+			<label for="chb_e" class="ch f_i" id="ch_e"></label>
+		</div>
+		<div class="form_k">
+			<span class="f_s">
+				Наименование
+			</span>
+			<input class="f_i t_s" id="i_e_n" placeholder="Наименование элемента">
+			</input>
+		</div>
+		<div class="form_k">
+			<span class="f_s">
+				Еденица измерения
+			</span>
+			<input class="f_i t_s" id="i_e_ni" placeholder="Наименование еденицы измерения">
+			</input>
+		</div>
+		<div class="form_k">
+			<span class="f_s">Знаков после запятой</span>
+			<select type="text" class="f_i t_s" id="i_n_d">
+				<option value=0>0</option>
+				<option value=1>1</option>
+				<option value=2>2</option>
+				<option value=3>3</option>
+				<option value=4>4</option>
+			</select>
+		</div>
+		<div class="form_k">
+			<span class="f_s">
+				Индекс типа
+			</span>
+			<input type="number" step="1" class="f_i t_s" id="i_e_ti" placeholder="Индекс типа">
+			</input>
+		</div>
+		<div class="form_k">
+			<span class="f_s">
+				Индекс подтипа
+			</span>
+			<input type="number" step="1" class="f_i t_s" id="i_e_tpi" placeholder="Индекс подтипа">
+			</input>
+		</div>
+		<input type="button" class="btn_s" value="Применить" id="btn_spv">
+	</div>
+</div>

@@ -1,0 +1,61 @@
+<div class="form_k">
+	<span class="f_s">Wifi</span>
+	<select type="text" class="f_i t_s" id="i_l_w">
+		<option value=1>Точка доступа</option>
+		<option value=2>Клиент</option>
+		<option value=3>Точка доступа и клиент</option>
+	</select>
+</div>
+<div class="form_k">
+	<span class="f_s">Имя</span>
+	<input type="text" class="f_i t_s" id="i_l_n" placeholder="Имя">
+</div>
+<div class="form_k">
+	<span class="f_s">Пароль</span>
+	<input type="password" class="f_i t_s" id="i_l_p" placeholder="Пароль">
+</div>
+<div class="form_k">
+	<span class="f_s">Точка доступа</span>
+	<input type="text" class="f_i t_s" id="i_l_n_r" placeholder="Точка доступа(Роутер)">
+</div>
+<div class="form_k">
+	<span class="f_s">Пароль точки</span>
+	<input type="password" class="f_i t_s" id="i_l_p_r" placeholder="Пароль точки">
+</div>
+<div class="form_k">
+	<span class="f_s">Логин</span>
+	<input type="text" class="f_i t_s" id="i_l_l" placeholder="Точка доступа" title="Доступ по web">
+</div>
+<div class="form_k nw_h">
+	<span class="f_s">Старый пароль</span>
+	<input type="password" class="f_i t_s" id="i_l_p_lo" placeholder="Пароль">
+</div>
+<div class="form_k">
+	<span class="f_s">Пароль</span>
+	<input type="password" class="f_i t_s" id="i_l_p_l" placeholder="Пароль">
+</div>
+<div class="form_k">
+	<span class="f_s">Статический IP</span>
+	<input type="checkbox" class="chb" id="chb_s_i" value="1">
+	<label for="chb_s_i" class="ch f_i" id="ch_s_i"></label>
+</div>
+<div class="form_k">
+	<span class="f_s">IP адрес</span>
+	<input class="f_i t_s" id="i_l_s_i" placeholder="IP адрес">
+</div>
+<div class="form_k">
+	<span class="f_s">Шлюз</span>
+	<input class="f_i t_s" id="i_l_s_g" placeholder="Шлюз">
+</div>
+<div class="form_k">
+	<span class="f_s">Маска сети</span>
+	<input class="f_i t_s" id="i_l_s_m" placeholder="Маска сети">
+</div>
+<div class="form_k">
+	<span class="f_s">DNS1</span>
+	<input class="f_i t_s" id="i_l_s_d1" placeholder="DNS1">
+</div>
+<div class="form_k">
+	<span class="f_s">DNS2</span>
+	<input class="f_i t_s" id="i_l_s_d2" placeholder="DNS2">
+</div>

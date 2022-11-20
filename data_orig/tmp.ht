@@ -1,0 +1,32 @@
+<div class="form_k">
+	<span class="f_s">Радиатор MAX</span>
+	<input type="text" class="f_i t_s" id="i_t_rm" placeholder="Радиатор MAX">
+</div>
+<div class="form_k">
+	<span class="f_s">Радиатор дельта</span>
+	<input type="text" class="f_i t_s" id="i_t_rd" placeholder="Радиатор дельта">
+</div>
+<div class="form_k">
+	<span class="f_s">Пульт MAX</span>
+	<input type="text" class="f_i t_s" id="i_t_pm" placeholder="Пульт MAX">
+</div>
+<div class="form_k">
+	<span class="f_s">Пульт дельта</span>
+	<input type="text" class="f_i t_s" id="i_t_pd" placeholder="Пульт дельта">
+</div>
+<div class="form_k">
+	<span class="f_s">Улица MAX</span>
+	<input type="text" class="f_i t_s" id="i_t_um" placeholder="Улица MAX" title="Максимальная температура на улице для работы радиатора">
+</div>
+<div class="form_k">
+	<span class="f_s">Улица дельта</span>
+	<input type="text" class="f_i t_s" id="i_t_ud" placeholder="Улица дельта">
+</div>
+<div class="form_k">
+	<span class="f_s">Улица MIN</span>
+	<input type="text" class="f_i t_s" id="i_t_un" placeholder="Улица MAX">
+</div>
+<div class="form_k">
+	<span class="f_s">Прибавка радиатору</span>
+	<input type="text" class="f_i t_s" id="i_t_up" placeholder="Улица дельта" title="При снижении температуры на улице ниже минимальной">
+</div>

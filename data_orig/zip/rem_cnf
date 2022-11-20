@@ -1,0 +1,26 @@
+{
+	"bluetooth":true,
+	"wifi":false,
+	"peers":[
+		{"act":true,"cnl":6,"mac_addr":[56,74,85,12,20,145]},
+		{"act":false,"cnl":6,"mac_addr":[0,0,0,0,0,0]},
+		{"act":true,"cnl":6,"mac_addr":[123,254,85,12,75,145]},
+		{"act":false,"cnl":0,"mac_addr":[0,0,0,0,0,0]},
+		{"act":true,"cnl":6,"mac_addr":[123,254,85,12,75,145]},
+		{"act":false,"cnl":0,"mac_addr":[0,0,0,0,0,0]},
+		{"act":false,"cnl":0,"mac_addr":[0,0,0,0,0,0]},
+		{"act":false,"cnl":0,"mac_addr":[0,0,0,0,0,0]},
+		{"act":false,"cnl":0,"mac_addr":[0,0,0,0,0,0]},
+		{"act":false,"cnl":0,"mac_addr":[0,0,0,0,0,0]},
+		{"act":false,"cnl":0,"mac_addr":[0,0,0,0,0,0]},
+		{"act":false,"cnl":0,"mac_addr":[0,0,0,0,0,0]},
+		{"act":false,"cnl":0,"mac_addr":[0,0,0,0,0,0]},
+		{"act":false,"cnl":0,"mac_addr":[0,0,0,0,0,0]},
+		{"act":false,"cnl":0,"mac_addr":[0,0,0,0,0,0]},
+		{"act":false,"cnl":0,"mac_addr":[0,0,0,0,0,0]},
+		{"act":false,"cnl":0,"mac_addr":[0,0,0,0,0,0]},
+		{"act":false,"cnl":0,"mac_addr":[0,0,0,0,0,0]},
+		{"act":false,"cnl":0,"mac_addr":[0,0,0,0,0,0]},
+		{"act":false,"cnl":0,"mac_addr":[0,0,0,0,0,0]}
+	]
+}

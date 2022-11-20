@@ -1,0 +1,14 @@
+<div class="title_s">
+	<span class="txt_s">
+		Значения
+	</span>
+</div>
+<div class="form_l" id="frm"></div>
+<div class="in_s">
+<input type="button" class="btn_s" value="Обновить" id="btn_v">
+</div>
+<div class="in_s">
+<input type="button" class="btn_s" value="Перезагрузить" id="btn_res">
+<input class=inp_hid id=fl_i type=file name=fl_i onchange=sh_cnf(this) accept=\".json\"><label for=fl_i class=\"btn_s pr\"><span>Применить конф</span></label>
+<input type="button" class="btn_s" value="Скачать конф" id="btn_gcnf">
+</div>

@@ -1,0 +1,13 @@
+<div class="title_s">
+	<span class="txt_s">
+		Быстрый старт.
+	</span>
+	<span class="txt_s">
+		Настройка платы приема измерений.
+	</span>
+</div>
+<input type="file" name="fl_i" id="fl_i" class="inp_hid" onchange="sh_cnf(this)">
+<label for="fl_i" class="btn btn-tertiary js-labelFile">
+  <span class="btn_s pr">Загрузить файл</span>
+</label>
+<input type="button" class="btn_s nx" value="Начать" id="btn_go">

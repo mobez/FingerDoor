@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=utf-8">
+<meta name="MobileOptimized" content="width">
+<meta name="HandheldFriendly" content="true">
+<meta name="Viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<title>Login</title>
+<style>
+body{margin: 0; height: 100vh;}
+.fon{height: 100vh;background-color: #555;display: flex;}
+.body{padding: 5px;width: 362px;background-color: rgb(238, 238, 238);margin: auto;font-size: 18px;}
+.txt{margin:  10px auto; display: block;text-align:center;}
+.inp{margin:  7px 25px 0 auto;text-align: right;}
+.vv{padding: 2px 5px;margin-left: 3px;}
+.btn{width: 100px;margin: 10px auto;display: block;background-color: #f8f8f8;}
+.btn:hover{background-color: #444;color: #ccc;}
+.body, .vv, .btn{border: 1px solid rgb(68, 68, 68);border-radius: 5px;}
+</style>
+</head>
+<body>
+<div class="fon">
+<div class="body">
+<form action="/login" method="POST">
+<span class="txt">Для входа введите логин и пароль</span>
+<div>
+<div class="inp">Логин:<input type="text" name="USERNAME" placeholder="Имя пользователя" class="vv"></div>
+<div class="inp">Пароль:<input type='password' name='PASSWORD' placeholder='Пароль' class="vv"></div>
+</div>
+<input type="submit" name="SUBMIT" value="OK" class="btn"></form>
+</div>
+</div>
+</body>
+</html>

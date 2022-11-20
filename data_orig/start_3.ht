@@ -1,0 +1,12 @@
+<div class="title_s">
+	<span class="txt_s">
+		Быстрый старт
+	</span>
+	<span class="txt_s">
+		Настройка температуры
+	</span>
+</div>
+<div class="form_l" id="frm"></div>
+<div class="in_s">
+<input type="button" class="btn_s pr" value="Назад" id="btn_p"><input type="button" class="btn_s nx" value="Готово" id="btn_n">
+</div>

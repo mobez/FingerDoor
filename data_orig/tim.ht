@@ -1,0 +1,16 @@
+<div class="form_k">
+	<span class="f_s">Сервер времени</span>
+	<input type="text" class="f_i t_s" id="i_t_s1" placeholder="0.pool.ntp.org">
+</div>
+<div class="form_k">
+	<span class="f_s">Сервер времени2</span>
+	<input type="text" class="f_i t_s" id="i_t_s2" placeholder="1.pool.ntp.org">
+</div>
+<div class="form_k">
+	<span class="f_s">Сервер времени3</span>
+	<input type="text" class="f_i t_s" id="i_t_s3" placeholder="2.pool.ntp.org">
+</div>
+<div class="form_k">
+	<span class="f_s">Переод отправки измерений</span>
+	<input type="number" step="1" class="f_i t_s" id="i_t_pt" placeholder="Переод отправки измерений" title="в минутах">
+</div>

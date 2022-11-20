@@ -1,0 +1,9 @@
+<div class="title_s">
+	<span class="txt_s">
+		Настройка сети
+	</span>
+</div>
+<div class="form_l" id="frm"></div>
+<div class="in_s">
+<input type="button" class="btn_s" value="Сохранить" id="btn_sv">
+</div>

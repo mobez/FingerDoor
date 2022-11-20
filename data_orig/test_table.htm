@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=utf-8">
+<meta name="MobileOptimized" content="width">
+<meta name="HandheldFriendly" content="true">
+<meta name="Viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<title>Настройка платы приема</title>
+<link rel="stylesheet" href="style.css">
+<!-- <script src="/ind.js"></script> -->
+</head>
+<body>
+<div class="title" id="ttl">
+	<div class="menu">
+		<input class="men-btn" type="button" value="Изм" id="btn_sts">
+		<input class="men-btn" type="button" value="Сеть" id="btn_lan">
+		<input class="men-btn" type="button" value="ESP-NOW" id="btn_now">
+		<input class="men-btn" type="button" value="Время" id="btn_tim">
+		<input class="men-btn" type="button" value="Сервер" id="btn_serv">
+		<input class="men-btn" type="button" value="Станция" id="btn_stan">
+	</div>
+</div>
+<div class="main" id="main">
+	<div class="title_s">
+		<span class="txt_s">
+			Настройка сервера приема
+		</span>
+	</div>
+	<div class="form_l" id="frm">
+		<div class="t_pl">
+			<div class="cnt_t">
+				<table class = "ap" id="el_t">
+					<tbody>
+						<tr>
+							<th>Серверы</th>
+						</tr>
+						<tr>
+							<td>
+								Сервер 1
+							</td>
+						</tr>
+						<tr>
+							<td>
+								Сервер 2
+							</td>
+						</tr>
+						<tr>
+							<td>
+								Сервер 3
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div class="cnf_t">
+				<span class="txt_t" id="n_tt">Сервер 1</span>
+				<div class="form_k">
+					<span class="f_s">Использовать</span>
+					<input type="checkbox" class="chb" id="chb_s" value="1">
+					<label for="chb_s" class="ch f_i" id="ch_s"></label>
+				</div>
+				<div class="form_k">
+					<span class="f_s">
+						Хост
+					</span>
+					<input class="f_i t_s">
+					</input>
+				</div>
+				<div class="form_k">
+					<span class="f_s">
+						Порт
+					</span>
+					<input class="f_i t_s">
+					</input>
+				</div>
+				<input type="button" class="btn_s" value="Применить" id="btn_spv">
+			</div>
+		</div>
+	</div>
+	<div class="in_s">
+	<input type="button" class="btn_s" value="Сохранить" id="btn_sv">
+	</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,1 @@
+{"route":false,"softap":true,"mdns_name":"New_18:FE:34:DB:67:50","name":"New_18:FE:34:DB:67:50","pass":"12345678","pass_esp":"12345678","login":"admin","pass_autch":"admin","static_ip":true,"local_ip":"10.11.161.23","gateway":"10.11.161.1","subnet":"255.255.255.0","dns1":"10.11.25.105","dns2":"10.11.25.115"}

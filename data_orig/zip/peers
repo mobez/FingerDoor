@@ -1,0 +1,42 @@
+[
+	{"act":true,"cnf":true,"name":"Радиация","lastname":"Площадка","mac_addr":[123,254,85,12,75,145],"mac_ap":[68,251,90,220,71,14],"null_id":0,"cnt":2,
+	"auto_measure":true}
+	,{"act":true,"cnf":false,"name":"Температура воздуха","lastname":"видимая","mac_addr":[145,123,75,85,254,12],"mac_ap":[145,123,75,85,254,13],"null_id":0,"cnt":2,
+	"auto_measure":true}
+	,{"act":false,"cnf":false,"name":"Еще что-то1","lastname":"невидимая","mac_addr":[123,254,85,12,75,145],"mac_ap":[145,123,75,85,254,13],"null_id":0,"cnt":2,
+	"auto_measure":true}
+	,{"act":false,"cnf":false,"name":"Еще что-то2","lastname":"невидимая","mac_addr":[123,254,85,12,75,145],"mac_ap":[145,123,75,85,254,13],"null_id":0,"cnt":2,
+	"auto_measure":true}
+	,{"act":false,"cnf":false,"name":"Еще что-то3","lastname":"невидимая","mac_addr":[123,254,85,12,75,145],"mac_ap":[145,123,75,85,254,13],"null_id":0,"cnt":2,
+	"auto_measure":true}
+	,{"act":false,"cnf":false,"name":"Еще что-то4","lastname":"невидимая","mac_addr":[123,254,85,12,75,145],"mac_ap":[145,123,75,85,254,13],"null_id":0,"cnt":2,
+	"auto_measure":true}
+	,{"act":false,"cnf":false,"name":"Еще что-то5","lastname":"невидимая","mac_addr":[123,254,85,12,75,145],"mac_ap":[145,123,75,85,254,13],"null_id":0,"cnt":2,
+	"auto_measure":true}
+	,{"act":false,"cnf":false,"name":"Еще что-то6","lastname":"невидимая","mac_addr":[123,254,85,12,75,145],"mac_ap":[145,123,75,85,254,13],"null_id":0,"cnt":2,
+	"auto_measure":true}
+	,{"act":false,"cnf":false,"name":"Еще что-то7","lastname":"невидимая","mac_addr":[123,254,85,12,75,145],"mac_ap":[145,123,75,85,254,13],"null_id":0,"cnt":2,
+	"auto_measure":true}
+	,{"act":false,"cnf":false,"name":"Еще что-то8","lastname":"невидимая","mac_addr":[123,254,85,12,75,145],"mac_ap":[145,123,75,85,254,13],"null_id":0,"cnt":2,
+	"auto_measure":true}
+	,{"act":false,"cnf":false,"name":"Еще что-то9","lastname":"невидимая","mac_addr":[123,254,85,12,75,145],"mac_ap":[145,123,75,85,254,13],"null_id":0,"cnt":2,
+	"auto_measure":true}
+	,{"act":false,"cnf":false,"name":"Еще что-то10","lastname":"невидимая","mac_addr":[123,254,85,12,75,145],"mac_ap":[145,123,75,85,254,13],"null_id":0,"cnt":2,
+	"auto_measure":true}
+	,{"act":false,"cnf":false,"name":"Еще что-то11","lastname":"невидимая","mac_addr":[123,254,85,12,75,145],"mac_ap":[145,123,75,85,254,13],"null_id":0,"cnt":2,
+	"auto_measure":true}
+	,{"act":false,"cnf":false,"name":"Еще что-то12","lastname":"невидимая","mac_addr":[123,254,85,12,75,145],"mac_ap":[145,123,75,85,254,13],"null_id":0,"cnt":2,
+	"auto_measure":true}
+	,{"act":false,"cnf":false,"name":"Еще что-то13","lastname":"невидимая","mac_addr":[123,254,85,12,75,145],"mac_ap":[145,123,75,85,254,13],"null_id":0,"cnt":2,
+	"auto_measure":true}
+	,{"act":false,"cnf":false,"name":"Еще что-то14","lastname":"невидимая","mac_addr":[123,254,85,12,75,145],"mac_ap":[145,123,75,85,254,13],"null_id":0,"cnt":2,
+	"auto_measure":true}
+	,{"act":false,"cnf":false,"name":"Еще что-то15","lastname":"невидимая","mac_addr":[123,254,85,12,75,145],"mac_ap":[145,123,75,85,254,13],"null_id":0,"cnt":2,
+	"auto_measure":true}
+	,{"act":false,"cnf":false,"name":"Еще что-то16","lastname":"невидимая","mac_addr":[123,254,85,12,75,145],"mac_ap":[145,123,75,85,254,13],"null_id":0,"cnt":2,
+	"auto_measure":true}
+	,{"act":false,"cnf":false,"name":"Еще что-то17","lastname":"невидимая","mac_addr":[123,254,85,12,75,145],"mac_ap":[145,123,75,85,254,13],"null_id":0,"cnt":2,
+	"auto_measure":true}
+	,{"act":false,"cnf":false,"name":"Еще что-то18","lastname":"невидимая","mac_addr":[123,254,85,12,75,145],"mac_ap":[145,123,75,85,254,13],"null_id":0,"cnt":2,
+	"auto_measure":true}
+]

@@ -1,0 +1,34 @@
+<div class="t_pl">
+	<div class="cnt_t">
+		<table class = "ap" id="el_t">
+			<tbody>
+				<tr>
+					<th>Серверы</th>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<div class="cnf_t">
+		<span class="txt_t" id="n_tt"></span>
+		<div class="form_k">
+			<span class="f_s">Использовать</span>
+			<input type="checkbox" class="chb" id="chb_s" value="1">
+			<label for="chb_s" class="ch f_i" id="ch_s"></label>
+		</div>
+		<div class="form_k">
+			<span class="f_s">
+				Хост
+			</span>
+			<input class="f_i t_s" id="i_s_ph" placeholder="Адрес сервера">
+			</input>
+		</div>
+		<div class="form_k">
+			<span class="f_s">
+				Порт
+			</span>
+			<input type="number" step="1" class="f_i t_s" id="i_s_pp" placeholder="Порт">
+			</input>
+		</div>
+		<input type="button" class="btn_s" value="Применить" id="btn_spv">
+	</div>
+</div>

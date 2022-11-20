@@ -1,0 +1,12 @@
+<div class="form_k">
+	<span class="f_s">Уличный датчик</span>
+	<input type="checkbox" class="chb" id="chb_u" value="1">
+	<label for="chb_u" class="ch f_i" id="ch_u"></label>
+</div>
+<div class="form_k">
+	<span class="f_s">MAC улицы</span>
+	<div class="d_i">
+	<input type="text" class="f_d t_s" id="i_n_m_u" placeholder="MAC адрес уличного датчика">
+	<input type="button" class="f_b t_s" id="i_n_m_us" value="Искать">
+	</div>
+</div>

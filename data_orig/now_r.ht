@@ -1,0 +1,124 @@
+<div class="title_s">
+	<span class="txt_s">
+		Настройка ESP-NOW
+	</span>
+</div>
+<div class="form_l" id="frm"></div>
+<div class="in_s">
+<input type="button" class="btn_s" value="Сохранить" id="btn_sv">
+</div>
+<div class="title_s">
+	<span class="txt_s">
+		Активные пиры
+	</span>
+</div>
+<div class="form_l" id="frmp_a">
+	<table class=peer id="tbp_a">
+		<tbody id="peer_act">
+			<tr>
+				<th>MAC</th><th></th>
+			</tr>
+		</tbody>
+	</table>
+</div>
+<div class="title_s">
+	<span class="txt_s">
+		Настройка пиров
+	</span>
+</div>
+<div class="form_l" id="frmp">
+	<table class=peer id="tbp">
+		<tbody id="peer">
+			<tr>
+				<th>Имя</th><th>MAC</th><th>Удалить</th><th>Настроить</th>
+			</tr>
+		</tbody>
+	</table>
+	<div class="in_s">
+		<input type="button" class="btn_a t_s" value="Добавить" id="btn_avp">
+	</div>
+</div>
+<div class="ovrl" id="pop">
+	<div class="pop" id="popn">
+		<fieldset class="fiel">
+			<legend class="lgndf" id="lgn">Точки доступа</legend>
+			<table class="ap" id="tbl">
+				<tbody id="ap">
+					<tr>
+						<th>Имя</th>
+						<th>Сигнал</th>
+						<th>MAC</th>
+						<th>Канал</th>
+						<th>Hide</th>
+					</tr>
+				</tbody>
+			</table>		
+		</fieldset>
+		<div class="in_s">
+			<input type="button" class="btn_s" value="Сканировать" id="btn_ps">
+		</div>
+	</div>
+</div>
+<div class="ovrl" id="pop2">
+	<div class="pop" id="popn2">
+		<fieldset class="fiel">
+			<legend class="lgndf" id="lgn_r">Настрайка для приема</legend>
+			<div class="form_k">
+				<span class="f_s">Тип</span>
+				<span class="f_i t_s" id="i_n_n_p"></span>
+			</div>
+			<div class="form_k">
+				<span class="f_s">Наименование</span>
+				<input class="f_i t_s" id="i_n_l_p" placeholder="Наименование">
+			</div>
+			<div class="form_k">
+				<span class="f_s">Начальный id изм</span>		
+				<select type="text" class="f_i t_s" id="i_n_i_p"></select>
+			</div>
+			<div class="form_k">
+				<span class="f_s">Кол-во изм</span>
+				<select type="text" class="f_i t_s" id="i_n_c_p"></select>
+			</div>
+			<div class="form_k">
+				<span class="f_s">Автоизмерение</span>
+				<input class="chb" id="chb_s_a" type="checkbox">
+				<label class="f_i ch" for="chb_s_a" id="ch_p_m"></label>
+			</div>
+		</fieldset>
+		<div class="in_s">
+			<input type="button" class="btn_s" value="Сохранить" id="btn_psp">
+		</div>
+		<fieldset class="fiel">
+			<legend class="lgndf" id="lgn_r">Настрайка устройства</legend>
+			<div class="form_k">
+				<span class="f_s">Wifi</span>
+				<input class="chb" id="chb_s_w" type="checkbox" value="2">
+				<label class="f_i ch" for="chb_s_w" id="ch_p_w"></label>
+			</div>
+			<div class="form_k">
+				<span class="f_s">Bluetooth</span>
+				<input class="chb" id="chb_s_b" type="checkbox" value="3">
+				<label class="f_i ch" for="chb_s_b" id="ch_p_b"></label>
+			</div>
+		</fieldset>
+		<div class="in_s">
+			<input type="button" class="btn_s" value="Сохранить" id="btn_psn">
+			<input type="button" class="btn_s" value="Reboot" id="btn_prn">
+		</div>
+		<div class="title_s">
+			<span class="txt_s">
+				Пиры устройства
+			</span>
+		</div>
+		<table class=peer id="tbp_p">
+			<tbody id="peer_pdev">
+				<tr>
+					<th>MAC</th><th>Channel</th><th></th>
+				</tr>
+			</tbody>
+		</table>
+		<div class="in_s">
+			<input type="button" class="btn_s" value="Очистить" id="btn_clr">
+		</div>
+	</div>
+</div>
