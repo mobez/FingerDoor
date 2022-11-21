@@ -462,19 +462,19 @@ void init_web(void){
     if ((figner_web == figner_ok) || (figner_web == figner_err)) figner_web = figner_none;
     server.send(200, "text/json", JSON.stringify(myObject));
   });
-  server.on("/delPhalanx", HTTP_GET, [](){
+  server.on("/delPhalanx", HTTP_POST, [](){
     if (!check_autch()) return;
     JSONVar myObject;
     if (figner_web != figner_start){
       figner_web = figner_start;
       myObject["p"] = deleteFingerprint(atoi(server.arg("id").c_str()));
-      figner_web = figner_none;
+      figner_web = figner_none;        
       server.send(200, "text/json", JSON.stringify(myObject));
     }else{
       server.send(404, "text/plain", "Занято другими действиями!");
     }
   });
-  server.on("/delFingers", HTTP_GET, [](){
+  server.on("/delFingers", HTTP_PUT, [](){
     if (!check_autch()) return;
     JSONVar myObject;
     if (figner_web != figner_start){

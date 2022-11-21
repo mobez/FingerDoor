@@ -1,6 +1,6 @@
-let main, timerId=null, stat_jn, sp_d=[],sp_err;
+let main, timerId=null, sp_t,sp_h,sp_err;
 const re_val = 30000;
-const volh = "<div class=title_s><span class=txt_s>Значения</span></div><div class=form_l id=frm></div><div class=in_s><input class=btn_s id=btn_v type=button value=Обновить></div>";
+const volh = "<div class=title_s><span class=txt_s>Значения</span></div><div class=form_l id=frm><div class=form_k><span class=\"err ev\"id=ev_err></span></div><div class=form_k><span class=\"f_s nv\">Температура:</span><span class=f_v id=ev_tmp></span></div><div class=form_k><span class=\"f_s nv\">Влажность:</span><span class=f_v id=ev_hud></span></div></div><div class=in_s><input class=btn_s id=btn_v type=button value=Обновить><input class=btn_s id=btn_od type=button value=Открыть></div>";
 
 function ce(t) {
   return document.createElement(t);
@@ -22,14 +22,14 @@ async function up_vol() {
 			}
 			timerId = setTimeout(up_vol, re_val);
 		}).then(res => res.json()).then(vl=>{
-			let len_v = vl.vol.length<stat_jn.devs.length?vl.vol.length:stat_jn.devs.length;
 			if (!vl.tm){
-				sp_err.innerHTML = "Данные еще не поступали!";
+				sp_err.innerHTML = "Время не синхронизировано!";
 				sp_err.classList.toggle("err",true);
 			}else{
 				let time = vl.tm * 1000;
 				const date = Number(new Date());
-				if ((date-900000) > time){
+				let dt = new Date(time);
+				if ((date-30000) > time){
 					let ot = Math.floor((date - time)/60000);
 					let he="";
 					if (ot > 59){
@@ -41,25 +41,24 @@ async function up_vol() {
 						else strH = " часов";
 
 						if ((mo < 2)||(mo > 20 && (mo % 10) < 2 && (mo % 10) > 0)) strM = " минуту";
-						else if((mo < 5)||(mo > 20 && (mo % 10) < 5 && (mo % 10) > 0)) strM = " минуты";
+						else if((mo < 5)||(mo > 20 && ((mo % 10) < 5) && ((mo % 10) > 0))) strM = " минуты";
 						else strM = " минут";
 						if (mo>0)sMM=" "+mo+strM;
 						he = ho+strH+sMM;
 					}else{
-						he = ot+" минут!";
+						if ((ot < 2)||(ot > 20 && (ot % 10) < 2 && (ot % 10) > 0)) strM = " минуту";
+						else if((ot < 5)||(ot > 20 && ((ot % 10) < 5) && ((ot % 10) > 0))) strM = " минуты";
+						else strM = " минут";
+						he = ot+strM+"!";
 					}
-					sp_err.innerHTML = "Данные не поступают "+he;
+					sp_err.innerHTML = "Время отстает на "+he+" ("+(dt.getHours()<10?"0":"")+dt.getHours()+":"+(dt.getMinutes()<10?"0":"")+dt.getMinutes()+")";
 					sp_err.classList.toggle("err",true);
 				}else{
-					let dt = new Date(time);
-					sp_err.innerHTML = "Данные за "+(dt.getHours()<10?"0":"")+dt.getHours()+":"+(dt.getMinutes()<10?"0":"")+dt.getMinutes();
+					sp_err.innerHTML = "Время "+(dt.getHours()<10?"0":"")+dt.getHours()+":"+(dt.getMinutes()<10?"0":"")+dt.getMinutes();
 					sp_err.classList.toggle("err",false);
 				};
-				for (let i = 0; i < len_v; i++) {
-					if (stat_jn.devs[i].act){
-						sp_d[i].innerHTML=vl.vol[i].toFixed(stat_jn.devs[i].dec)+stat_jn.devs[i].v_name;
-					};
-				};						
+				sp_t.innerHTML = vl.vol.temp.toFixed(2)+"°C";
+				sp_h.innerHTML = vl.vol.hud.toFixed(0)+"%";					
 			};
 			if (timerId){
 				clearTimeout(timerId);
@@ -82,36 +81,15 @@ function ready(){
 	main = get_el("main");
 	main.innerHTML = volh;
 	get_el("btn_v").onclick = up_vol;
-	fetch("/station.json").then(res => res.json())
-	.then(tt => {
-		stat_jn=tt;
-		let frm_v = get_el("frm");
-		let div_v, sn_v_n, sn_v_v;
-		div_v=ce("div");
-		div_v.classList.add("form_k");
-		sp_err=ce("span");
-		sp_err.classList.add("ev");
-		se(frm_v,div_v);
-		se(div_v,sp_err);
-		for (var i = 0; i < stat_jn.devs.length; i++) {
-			if (stat_jn.devs[i].act){
-				div_v=ce("div");
-				div_v.classList.add("form_k");
-				sn_v_n=ce("span");
-				sn_v_n.innerHTML=stat_jn.devs[i].name+":";
-				sn_v_n.classList.add("f_s");
-				sn_v_n.classList.add("nv");
-				sn_v_v=ce("span");
-				sn_v_v.innerHTML="0"+stat_jn.devs[i].v_name;
-				sn_v_v.classList.add("f_v");
-				sp_d[i]=sn_v_v;
-				se(frm_v,div_v);
-				se(div_v,sn_v_n);
-				se(div_v,sn_v_v);
-			};
-		};
-		up_vol();
-	});
+	get_el("btn_od").onclick = () => {
+		fetch("/open", {
+			method: "PUT"
+		}).then(res => res.text()).then(txt=>{alert(txt);});
+	};
+	sp_err = document.getElementById("ev_err");
+	sp_t = document.getElementById("ev_tmp");
+	sp_h = document.getElementById("ev_hud");
+	up_vol();
 }
 
 document.addEventListener("DOMContentLoaded", ready);

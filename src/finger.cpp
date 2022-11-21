@@ -268,6 +268,14 @@ int deleteFingerprint(uint8_t id) {
   if (p == FINGERPRINT_OK) {
     Serial.println("Deleted!");
     conf_finger[0][id-1].act =  false;
+    conf_finger[0][id-1].id = 0;
+    conf_finger[0][id-1].phalanx = thumb;
+    conf_finger[0][id-1].name[0] = 0;
+    if (!saveconfig(finger_cnf)) {
+      Serial.println("Failed to save config");
+    } else {
+      Serial.println("Config saved");
+    } 
   } else if (p == FINGERPRINT_PACKETRECIEVEERR) {
     Serial.println("Communication error");
   } else if (p == FINGERPRINT_BADLOCATION) {
@@ -290,7 +298,15 @@ int deleteAllFingerprint(void) {
     for (uint8_t i = 0; i < MAXFINGER; i++)
     {
       conf_finger[0][i].act =  false;
+      conf_finger[0][i].id = 0;
+      conf_finger[0][i].phalanx = thumb;
+      conf_finger[0][i].name[0] = 0;
     }
+    if (!saveconfig(finger_cnf)) {
+      Serial.println("Failed to save config");
+    } else {
+      Serial.println("Config saved");
+    } 
   } else if (p == FINGERPRINT_PACKETRECIEVEERR) {
     Serial.println("Communication error");
   } else if (p == FINGERPRINT_BADLOCATION) {

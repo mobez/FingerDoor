@@ -417,9 +417,26 @@ function serv_cnf(id){
 	serv_id=id;
 }
 function dev_up(){
-	devs[dev_id].act = get_el("chb_e").checked;
-	devs[dev_id].name = get_el("i_e_n").value;
-	devs[dev_id].phalanx = Number(get_el("i_n_d").value);
+	if (devs[dev_id].id){
+		devs[dev_id].act = get_el("chb_e").checked;
+		devs[dev_id].name = get_el("i_e_n").value;
+		devs[dev_id].phalanx = Number(get_el("i_n_d").value);
+	}else{
+		let cnf_a = false;
+		if (get_el("chb_e").checked != devs[dev_id].act){
+			get_el("chb_e").checked = devs[dev_id].act;
+			cnf_a = true;
+		}
+		if (get_el("i_e_n").value != devs[dev_id].name){
+			get_el("i_e_n").value = devs[dev_id].name;
+			cnf_a = true;
+		}
+		if (get_el("i_n_d").value != devs[dev_id].phalanx){
+			get_el("i_n_d").value = devs[dev_id].phalanx;
+			cnf_a = true;
+		}
+		if (cnf_a) alert("Нельзя редактировать не зарегестрированный отпечаток!");
+	}
 }
 function dev_cnf(id){
 	if (dev_id >= 0)dev_up();
@@ -1139,12 +1156,14 @@ async function go_pg(pg, frm = "", pp = 0, ftch=false) {
 			get_el("btn_res").onclick = () => {
 				fetch("/res", {
 					method: "PUT"
-				}).then(res => res.text()).then(txt=>{alert(txt);});
+				}).then(res => res.text()).then(txt=>{alert(txt);})
+				.catch(res => res.text()).then(txt=>{alert(txt);});
 			};
 			get_el("btn_od").onclick = () => {
 				fetch("/open", {
 					method: "PUT"
-				}).then(res => res.text()).then(txt=>{alert(txt);});
+				}).then(res => res.text()).then(txt=>{alert(txt);})
+				.catch(res => res.text()).then(txt=>{alert(txt);});
 			};
       sp_err = document.getElementById("ev_err");
       sp_t = document.getElementById("ev_tmp");
@@ -1213,7 +1232,28 @@ async function go_pg(pg, frm = "", pp = 0, ftch=false) {
 		break;
 		case 60:
 			dev_id=-1;
-			get_el("btn_stan").classList.add("act");
+			get_el("btn_stan").classList.add("act");			
+			get_el("btn_srem").onclick = () => {
+				fetch("/delFingers", {
+					method: "PUT"
+				}).then(res => res.text()).then(txt=>{
+					set_val(4);
+					alert(txt);					
+				})
+				.catch(res => res.text()).then(txt=>{alert(txt);});
+			};
+			get_el("btn_spr").onclick = () => {
+				let fD = new FormData();
+				fD.append("id", dev_id+1);
+				fetch("/delPhalanx", {
+					method: "POST",
+		      body: fD
+				}).then(res => res.text()).then(txt=>{
+					set_val(4);
+					alert(txt);					
+				})
+				.catch(res => res.text()).then(txt=>{alert(txt);});
+			};
 			set_val(6);
 			set_cl("btn_spv", 18);
 			set_cl("btn_sv", 19);
@@ -1229,7 +1269,7 @@ async function go_pg(pg, frm = "", pp = 0, ftch=false) {
 
 function jamp_p(pp) {
 	if (pp < 6) del_cl("men-btn", "act");
-	if (pp != 12){
+	if (pp){
 		if (timerId){
 			clearTimeout(timerId);
 			timerId = null;
@@ -1265,21 +1305,6 @@ function jamp_p(pp) {
 		break;
 		case 5:
 			go_pg(stan_r, stanh, 60);
-		break;
-		case 6:
-			go_pg(start_1, lan, 1);
-		break;
-		case 7:
-			go_pg(start_2, now_1, 2);
-		break;
-		case 8:
-			go_pg(start_3, timh, 3);
-		break;
-		case 9:
-			go_pg(start_4, servh, 4);
-		break;
-		case 10:
-			go_pg(start_5, stanh, 5);
 		break;
 		case 11:
 			send_val(6, false, function(){	
