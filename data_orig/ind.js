@@ -1337,13 +1337,17 @@ async function go_pg(pg, frm = "", pp = 0, ftch=false) {
 				fetch("/res", {
 					method: "PUT"
 				}).then(res => res.text()).then(txt=>{alert(txt);})
-				.catch(res => res.text()).then(txt=>{alert(txt);});
+				.catch(()=>{
+					alert("Что-то пошло не так!");
+				});
 			};
 			get_el("btn_od").onclick = () => {
 				fetch("/open", {
 					method: "PUT"
 				}).then(res => res.text()).then(txt=>{alert(txt);})
-				.catch(res => res.text()).then(txt=>{alert(txt);});
+				.catch(()=>{
+					alert("Что-то пошло не так!");
+				});
 			};
       sp_err = document.getElementById("ev_err");
       sp_t = document.getElementById("ev_tmp");
@@ -1395,7 +1399,7 @@ async function go_pg(pg, frm = "", pp = 0, ftch=false) {
 			get_el("btn_avp").onclick=function(e){
 				get_el("pop").style.display="block";
 				fetch("/get_ap").then(res=>res.json())
-			.then(jsn=>cltbl(jsn));
+				.then(jsn=>cltbl(jsn));
 			};					
 		break;
 		case 58:
