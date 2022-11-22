@@ -594,6 +594,7 @@ function check_add_phalanx(){
 				return "Что-то пошло не так!";
 				break;	
 			case 4:
+				set_ext();
 				return jsn.res.text();
 				break;
 			default:
@@ -625,6 +626,8 @@ function add_phalanx(){
 			.then(res => {
 				if (res.ok){
 					check_add_phalanx();
+				}else{
+					set_ext();
 				}
 				return res.text();
 			}).then(txt=>{
@@ -1093,8 +1096,11 @@ async function set_val(pp) {
 						tr=ce("tr");
 						se(tbl, 0, tr);
 						td=tr.insertCell(0);
-            if (vl[i].act && vl[i].name.length){
+            if (vl[i].name.length){
               td.innerHTML = vl[i].name + "("+phalanxs[vl[i].phalanx]+")";
+							if (!vl[i].act){
+								td.style.color = "red";
+							}
             }else{
               td.innerHTML = "Отпечаток "+(i+1);
             }						
@@ -1318,11 +1324,14 @@ async function go_pg(pg, frm = "", pp = 0, ftch=false) {
 			get_el("btn_srem").onclick = () => {
 				fetch("/delFingers", {
 					method: "PUT"
-				}).then(res => res.text()).then(txt=>{
-					set_val(4);
+				}).catch(()=>{
+					alert("Что-то пошло не так!");
+				}).then(res => {
+					if (res.ok) set_val(6);
+					return res.text();
+				}).then(txt=>{					
 					alert(txt);					
-				})
-				.catch(res => res.text()).then(txt=>{alert(txt);});
+				});
 			};
 			get_el("btn_spr").onclick = () => {
 				let fD = new FormData();
@@ -1333,8 +1342,10 @@ async function go_pg(pg, frm = "", pp = 0, ftch=false) {
 				}).catch(()=>{
 					alert("Что-то пошло не так!");
 				})
-				.then(res => res.text()).then(txt=>{
-					set_val(4);
+				.then(res => {
+					if (res.ok) set_val(6);
+					return res.text();
+				}).then(txt=>{					
 					alert(txt);					
 				});
 			};
