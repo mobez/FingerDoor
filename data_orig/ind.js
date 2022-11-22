@@ -197,24 +197,27 @@ async function send_val(pp, alrt = true, cb=null){
 						con_lan.route = false;
 						con_lan.softap = false;
 					};
-					let res = await fetch('/set_lan', {
+					await fetch('/set_lan', {
 			      method: 'POST',
 			      headers: {
 					    'Content-Type': 'application/json;charset=utf-8'
 					  },
 			      body: JSON.stringify(con_lan)
-			    });
-			    if (res.status == 510){
-			    	set_err(1);
-			    	snd = false;
-			    }else if(res.status == 200){
-			    	if (alrt)	alert("Настройки сети удачно сохранены!");
-			    	snd = true;
-			    	if (cb) cb();
-			    }else{
-			    	alert("Что-то пошло не так!");
-			    	snd = false;
-			    };
+			    }).then(res => {
+						if (res.status == 510){
+							set_err(1);
+							snd = false;
+						}else if(res.status == 200){
+							if (alrt)	alert("Настройки сети удачно сохранены!");
+							snd = true;
+							if (cb) cb();
+						}else{
+							alert("Что-то пошло не так!");
+							snd = false;
+						};
+					}).catch( () =>{
+						snd = false;
+					});
 				}else{
 					snd = false;
 				}
@@ -228,13 +231,13 @@ async function send_val(pp, alrt = true, cb=null){
           delete b_js.peers[i].cnf;
           delete b_js.peers[i].name;
         }
-        fetch('/set_now', {
+        await fetch('/set_now', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json;charset=utf-8'
           },
           body: JSON.stringify(b_js)
-        }).then(function(res){
+        }).then(res => {
           if(res.status == 200){
             if (alrt) alert("Серверы удачно сохранены!");
             snd = true;
@@ -243,14 +246,16 @@ async function send_val(pp, alrt = true, cb=null){
             alert("Что-то пошло не так!");
             snd = false;
           };
-        });
+        }).catch( () =>{
+					snd = false;
+				});
 			break;
 			case 4:
 				fD.append("ntpServer1", get_el("i_t_s1").value);
 				fD.append("ntpServer2", get_el("i_t_s2").value);
 				fD.append("ntpServer3", get_el("i_t_s3").value);
 				fD.append("pereod_alarm", get_el("i_t_pt").value);
-				fetch('/set_time', {
+				await fetch('/set_time', {
 		      method: 'POST',
 		      body: fD
 		    }).then(function(res){
@@ -262,11 +267,13 @@ async function send_val(pp, alrt = true, cb=null){
 			    	alert("Что-то пошло не так!");
 			    	snd = false;
 			    };
-			  });
+			  }).catch( () =>{
+					snd = false;
+				});
 			break;
 			case 5:
 				if (serv_id >= 0)serv_up();
-				fetch('/set_server', {
+				await fetch('/set_server', {
 		      method: 'POST',
 		      headers: {
 				    'Content-Type': 'application/json;charset=utf-8'
@@ -281,11 +288,13 @@ async function send_val(pp, alrt = true, cb=null){
 			    	alert("Что-то пошло не так!");
 			    	snd = false;
 			    };
-			  });
+			  }).catch( () =>{
+					snd = false;
+				});
 			break;
 			case 6:
 				if (dev_id >= 0)dev_up();
-				fetch('/set_fingers', {
+				await fetch('/set_fingers', {
 		      method: 'POST',
 		      headers: {
 				    'Content-Type': 'application/json;charset=utf-8'
@@ -300,7 +309,9 @@ async function send_val(pp, alrt = true, cb=null){
 			    	alert("Что-то пошло не так!");
 			    	snd = false;
 			    };
-			  });
+			  }).catch( () =>{
+					snd = false;
+				});
 			break;
 			default:
 			  snd = false;
@@ -337,8 +348,8 @@ function set_cl_t(mac, cnl){
     	alert("Что-то пошло не так!");
     	return "error";
     };
-  }).then(function(res){
-  	console.log(res);
+  }).then(txt => {
+  	console.log(txt);
   });
 }
 function ch_mac_peer(mac){
@@ -448,7 +459,13 @@ function dev_cnf(id){
 }
 function sts_fetch(id){
 	if (id >= 0){
-		fetch(`/sts_now?mac=${mactostr(now_j.peers[id].mac_addr)}`).then(res => res.json()).then(jsn => {
+		fetch(`/sts_now?mac=${mactostr(now_j.peers[id].mac_addr)}`).then(res =>{
+			if (res.ok){
+				return res.json();
+			}else{
+				throw new UserException('File not font!');
+			}
+		}).then(jsn => {
 			now_j.peers[id].sts = jsn.sts;
 			get_sts(id, jsn);
 		}).catch(err => {
@@ -465,7 +482,13 @@ function sts_fetch(id){
 			}
 		});
 	}else{
-		fetch(`/sts_now?mac=${peer_add.mac_addr}`).then(res => res.json()).then(jsn => {
+		fetch(`/sts_now?mac=${peer_add.mac_addr}`).then(res =>{
+			if (res.ok){
+				return res.json();
+			}else{
+				throw new UserException('File not font!');
+			}
+		}).then(jsn => {
 			peer_add.sts = jsn.sts;
 			get_sts(-1, jsn);
 		}).catch(err => {
@@ -486,7 +509,7 @@ function dev_reboot(id){
 	fetch('/res_now', {
     method: 'POST',
     body: fD
-  }).then(function(res){
+  }).then(res => {
     if(res.status == 200){
     	set_var(id, 14);
     	get_sts(id);
@@ -497,11 +520,12 @@ function dev_reboot(id){
     	alert("Что-то пошло не так!");
     	console.log("err");
     };
-  });
+  }).catch(()=>{
+		alert("Что-то пошло не так!");
+	});
 }
 function device_viv(jsn, id){
 	now_j.peers[id].rem = {...jsn};
-	console.log(now_j.peers[id]);
 	get_el("btn_psp").onclick = () =>{
 		save_rem_peer(id);
 	};
@@ -567,17 +591,11 @@ function check_add_phalanx(){
 		set_ext();
 	})
 	.then(res => {
-		console.log(res);
 		if (res.ok){
 			res.json();
 		}else{
 			return {sts:4, res};
 		}
-	})
-	.catch((e)=>{
-		console.log(e);
-		alert("Что-то пошло не так!");
-		set_ext();
 	})
 	.then(jsn=>{
 		switch (jsn.sts) {
@@ -604,6 +622,11 @@ function check_add_phalanx(){
 		}
 	}).then(txt =>{
 		alert(txt);
+	})
+	.catch((e)=>{
+		console.log(e);
+		alert("Что-то пошло не так!");
+		set_ext();
 	});
 }
 function add_phalanx(){
@@ -619,10 +642,6 @@ function add_phalanx(){
 				method: "POST",
 		    body: fD
 			})
-			.catch(()=>{
-				alert("Что-то пошло не так!");
-				set_ext();
-			})
 			.then(res => {
 				if (res.ok){
 					check_add_phalanx();
@@ -632,6 +651,10 @@ function add_phalanx(){
 				return res.text();
 			}).then(txt=>{
 				alert(txt);					
+			})
+			.catch(()=>{
+				alert("Что-то пошло не так!");
+				set_ext();
 			});
 		}else{
 			alert("Име не менее 3 знаков!");
@@ -721,7 +744,15 @@ function get_sts(id, jsn=null){
 					break;
 					case 11:
 						console.log("get config ok!");
-						fetch(`/rem_cnf?mac=${mactostr(b_obj.mac_addr)}`).then(res => res.json()).then(jsn =>device_viv(jsn, id));
+						fetch(`/rem_cnf?mac=${mactostr(b_obj.mac_addr)}`).then(res =>{
+							if (res.ok){
+								return res.json();
+							}else{
+								throw new UserException('File not font!');
+							}
+						}).then(jsn =>device_viv(jsn, id)).catch(()=>{
+							alert("Что-то пошло не так!");
+						});
 					break;
 					case 12:
 						console.log("set config ok!");
@@ -781,7 +812,9 @@ function del_peer(id){
     	alert("Что-то пошло не так!");
     	console.log("err");
     };
-  });
+  }).catch(()=>{
+		alert("Что-то пошло не так!");
+	});
 }
 function del_peer_old(id, id_o){
 	let fD = new FormData();
@@ -801,7 +834,9 @@ function del_peer_old(id, id_o){
     	alert("Что-то пошло не так!");
     	console.log("err");
     };
-  });
+  }).catch(()=>{
+		alert("Что-то пошло не так!");
+	});
 }
 function clear_rem_peer(id){
 	let fD = new FormData();
@@ -820,7 +855,9 @@ function clear_rem_peer(id){
     	alert("Что-то пошло не так!");
     	console.log("err");
     };
-  });
+  }).catch(()=>{
+		alert("Что-то пошло не так!");
+	});
 }
 function save_rem_peer(id, tp=0){
 	let fD = new FormData();
@@ -840,7 +877,9 @@ function save_rem_peer(id, tp=0){
 		    }else{
 		    	alert("Что-то пошло не так!");
 		    };
-		  });
+		  }).catch(()=>{
+				alert("Что-то пошло не так!");
+			});
 		break;
 		case 1:
 			now_j.peers[id].rem.bluetooth = get_el("chb_s_b").checked;
@@ -859,15 +898,27 @@ function save_rem_peer(id, tp=0){
 		    }else{
 		    	alert("Что-то пошло не так!");
 		    };
-		  });
+		  }).catch(()=>{
+				alert("Что-то пошло не так!");
+			});
 		break;
 	}
 }
 function cnf_peer(id){
 	if (now_j.peers[id].cnf){
-		fetch(`/rem_cnf?mac=${mactostr(now_j.peers[id].mac_addr)}`).then(res => res.json()).then(jsn => device_viv(jsn, id));
+		fetch(`/rem_cnf?mac=${mactostr(now_j.peers[id].mac_addr)}`).then(res =>{
+			if (res.ok){
+				return res.json();
+			}else{
+				throw new UserException('File not font!');
+			}
+		}).then(jsn => device_viv(jsn, id)).catch(()=>{
+			alert("Что-то пошло не так!");
+		}).catch(()=>{
+			alert("Что-то пошло не так!");
+		});
 	}else{
-		fetch(`/get_now_cnf?mac=${mactostr(now_j.peers[id].mac_addr)}`).then(function(res){
+		fetch(`/get_now_cnf?mac=${mactostr(now_j.peers[id].mac_addr)}`).then(res => {
 	    if(res.status == 200){
 	    	set_var(id);
 	    	get_sts(id);
@@ -881,186 +932,213 @@ function cnf_peer(id){
 	    };
 	  }).then(function(res){
 	  	console.log(res);
-	  });
+	  }).catch(()=>{
+			alert("Что-то пошло не так!");
+		});
 	}
 }
 async function set_val(pp) {
 	let vl;
 	switch(pp){
 		case 1:
-			try {
-				const res = await fetch("/lan.json");
+			fetch("/lan.json")
+			.then(res =>{
 				if (res.ok){
-					con_lan = await res.json();
-					get_el("i_l_n").value = con_lan.mdns_name;
-					get_el("i_l_p").value = con_lan.pass_esp;
-					get_el("i_l_n_r").value = con_lan.name;
-					get_el("i_l_p_r").value = con_lan.pass;
-					get_el("i_l_l").value = con_lan.login;
-					if (now_j.new_dev) get_el("i_l_p_lo").value = con_lan.pass_autch;
-					let wf = get_el("i_l_w");
-					if(con_lan.route && con_lan.softap){
-						wf.value = 3;
-					}else if(con_lan.route){
-						wf.value = 2;
-					}else if(con_lan.softap){
-						wf.value = 1;
-					}else{
-						wf.value = 0;
-					};
+					return res.json();
+				}else{
+					throw new UserException('File not font!');
+				}
+			}).then(lan => {
+				get_el("i_l_n").value = lan.mdns_name;
+				get_el("i_l_p").value = lan.pass_esp;
+				get_el("i_l_n_r").value = lan.name;
+				get_el("i_l_p_r").value = lan.pass;
+				get_el("i_l_l").value = lan.login;
+				if (now_j.new_dev) get_el("i_l_p_lo").value = lan.pass_autch;
+				let wf = get_el("i_l_w");
+				if(lan.route && lan.softap){
+					wf.value = 3;
+				}else if(lan.route){
+					wf.value = 2;
+				}else if(lan.softap){
+					wf.value = 1;
+				}else{
+					wf.value = 0;
 				};
-			} catch (error) {
-			  console.log(error.message);
-			};
+			}).catch(()=>{
+				alert("Что-то пошло не так!");
+			});
 		break;
 		case 2:
-			try {
-				const res = await fetch("/now");
+			fetch("/now")
+			.then(res =>{
 				if (res.ok){
-					now_j = await res.json();
-					get_el("i_n_k").value = now_j.channel;
-					if (!now_j.new_dev){
-						fetch("/peers").then(res => res.json()).then(jsn => {
-							now_j.peers = [...jsn];
-							fetch("/peers_act").then(res => res.json()).then(jsn_act => {
-								act_j = [...jsn_act];
-								let tr_a, td_a, mac;
-								let tbl_a=get_el("peer_act");
-								while (tbl_a.rows.length>1) {
-								  tbl_a.deleteRow(1);
-								};
-								for (let i = 0; i < act_j.length; i++) {
-									if (act_j[i].act){
-										if ((act_j[i].cnf_id >=0 )&&(now_j.peers[act_j[i].cnf_id].name.length)&&(now_j.peers[act_j[i].cnf_id].act))
-											mac = now_j.peers[act_j[i].cnf_id].name+" / "+mactostr(act_j[i].mac_addr);
-										else
-											mac = mactostr(act_j[i].mac_addr);
-										tr_a=ce("tr");
-										tr_a.insertCell(0).innerHTML = mac;
-										td_a=tr_a.insertCell(1);
-										td_a.innerHTML = "Удалить";
-										td_a.setAttribute("onclick", `del_act_peer(${i})`);
-										td_a.classList.add("hov");
-										se(tbl_a, 0, tr_a);
-										tr_a.style.textAlign = "center";				
-									};
-								};
-							});
-							let tr, td, nms;
-							let tbl=get_el("peer");
-							while (tbl.rows.length>1) {
-							  tbl.deleteRow(1);
+					return res.json();
+				}else{
+					throw new UserException('File not font!');
+				}
+			}).then(jsn => {
+				now_j = {...jsn};
+				get_el("i_n_k").value = now_j.channel;
+				fetch("/peers").then(res =>{
+					if (res.ok){
+						return res.json();
+					}else{
+						throw new UserException('File not font!');
+					}
+				}).then(jsn => {
+					now_j.peers = [...jsn];
+					fetch("/peers_act").then(res =>{
+						if (res.ok){
+							return res.json();
+						}else{
+							throw new UserException('File not font!');
+						}
+					}).then(jsn => {
+						act_j = [...jsn];
+						let tr_a, td_a, mac;
+						let tbl_a=get_el("peer_act");
+						while (tbl_a.rows.length>1) {
+							tbl_a.deleteRow(1);
+						};
+						for (let i = 0; i < act_j.length; i++) {
+							if (act_j[i].act){
+								if ((act_j[i].cnf_id >=0 )&&(now_j.peers[act_j[i].cnf_id].name.length)&&(now_j.peers[act_j[i].cnf_id].act))
+									mac = now_j.peers[act_j[i].cnf_id].name+" / "+mactostr(act_j[i].mac_addr);
+								else
+									mac = mactostr(act_j[i].mac_addr);
+								tr_a=ce("tr");
+								tr_a.insertCell(0).innerHTML = mac;
+								td_a=tr_a.insertCell(1);
+								td_a.innerHTML = "Удалить";
+								td_a.setAttribute("onclick", `del_act_peer(${i})`);
+								td_a.classList.add("hov");
+								se(tbl_a, 0, tr_a);
+								tr_a.style.textAlign = "center";				
 							};
-							for (let i = 0; i < now_j.peers.length; i++){
-								if (now_j.peers[i].act){
-									if ((now_j.peers[i].lastname.length)&&(now_j.peers[i].name.length))
-										nms = now_j.peers[i].name+" / "+now_j.peers[i].lastname;
-									else
-										if (now_j.peers[i].lastname.length) 
-											nms = now_j.peers[i].lastname;
-										else
-											nms = now_j.peers[i].name;
-									tr=ce("tr");
-									tr.insertCell(0).innerHTML = nms;
-									tr.insertCell(1).innerHTML = mactostr(now_j.peers[i].mac_addr);
-									td=tr.insertCell(2);
-									td.innerHTML = "Удалить";
-									td.setAttribute("onclick", `del_peer(${i})`);
-									td.classList.add("hov");
-									td=tr.insertCell(3);
-									td.innerHTML = "Настроить";
-									td.setAttribute("onclick", `cnf_peer(${i})`);
-									td.classList.add("hov");
-									se(tbl, 0, tr);
-									tr.style.textAlign = "center";
-								};
-							};
-						});
+						};
+					});
+					let tr, td, nms;
+					let tbl=get_el("peer");
+					while (tbl.rows.length>1) {
+						tbl.deleteRow(1);
 					};
-				};
-			} catch (error) {
-			  console.log(error.message);
-			};
+					for (let i = 0; i < now_j.peers.length; i++){
+						if (now_j.peers[i].act){
+							if ((now_j.peers[i].lastname.length)&&(now_j.peers[i].name.length))
+								nms = now_j.peers[i].name+" / "+now_j.peers[i].lastname;
+							else
+								if (now_j.peers[i].lastname.length) 
+									nms = now_j.peers[i].lastname;
+								else
+									nms = now_j.peers[i].name;
+							tr=ce("tr");
+							tr.insertCell(0).innerHTML = nms;
+							tr.insertCell(1).innerHTML = mactostr(now_j.peers[i].mac_addr);
+							td=tr.insertCell(2);
+							td.innerHTML = "Удалить";
+							td.setAttribute("onclick", `del_peer(${i})`);
+							td.classList.add("hov");
+							td=tr.insertCell(3);
+							td.innerHTML = "Настроить";
+							td.setAttribute("onclick", `cnf_peer(${i})`);
+							td.classList.add("hov");
+							se(tbl, 0, tr);
+							tr.style.textAlign = "center";
+						};
+					};
+				});
+			}).catch(()=>{
+				alert("Что-то пошло не так!");
+			});
 		break;
 		case 3:
-			try {
-				const res = await fetch("/time.json");
+			fetch("/time.json")
+			.then(res =>{
 				if (res.ok){
-					const vl = await res.json();
-					get_el("i_t_s1").value = vl.ntpServer1;
-					get_el("i_t_s2").value = vl.ntpServer2;
-					get_el("i_t_s3").value = vl.ntpServer3;
-					get_el("i_t_pt").value = vl.pereod_alarm;
-				};
-			} catch (error) {
-			  console.log(error.message);
-			};
+					return res.json();
+				}else{
+					throw new UserException('File not font!');
+				}
+			}).then(vl => {
+				get_el("i_t_s1").value = vl.ntpServer1;
+				get_el("i_t_s2").value = vl.ntpServer2;
+				get_el("i_t_s3").value = vl.ntpServer3;
+				get_el("i_t_pt").value = vl.pereod_alarm;
+			}).catch(()=>{
+				alert("Что-то пошло не так!");
+			});
 		break;
 		case 4:
-			try {
-				const res = await fetch("/val");
+			fetch("/val")
+			.then(res =>{
 				if (res.ok){
-					const vl = await res.json();
-          
-					if (!vl.tm){
-						sp_err.innerHTML = "Время не синхронизировано!";
+					return res.json();
+				}else{
+					throw new UserException('Value not get!');
+				}
+			}).then(vl => {
+				if (!vl.tm){
+					sp_err.innerHTML = "Время не синхронизировано!";
+					sp_err.classList.toggle("err",true);
+				}else{
+					let time = vl.tm * 1000;
+					const date = Number(new Date());
+					let dt = new Date(time);
+					if ((date-30000) > time){
+						let ot = Math.floor((date - time)/60000);
+						let he="";
+						if (ot > 59){
+							let ho = Math.floor(ot/60);
+							let mo = ot%60;
+							let strH="", strM="", sMM="";
+							if ((ho < 2)||((ho % 100) > 20 && (ho % 10) < 2 && (ho % 10) > 0)) strH = " час";
+							else if((ho < 5)||((ho % 100) > 20 && (ho % 10) < 5 && (ho % 10) > 0)) strH = " часа";
+							else strH = " часов";
+
+							if ((mo < 2)||(mo > 20 && (mo % 10) < 2 && (mo % 10) > 0)) strM = " минуту";
+							else if((mo < 5)||(mo > 20 && ((mo % 10) < 5) && ((mo % 10) > 0))) strM = " минуты";
+							else strM = " минут";
+							if (mo>0)sMM=" "+mo+strM;
+							he = ho+strH+sMM;
+						}else{
+							if ((ot < 2)||(ot > 20 && (ot % 10) < 2 && (ot % 10) > 0)) strM = " минуту";
+							else if((ot < 5)||(ot > 20 && ((ot % 10) < 5) && ((ot % 10) > 0))) strM = " минуты";
+							else strM = " минут";
+							he = ot+strM+"!";
+						}
+						sp_err.innerHTML = "Время отстает на "+he+" ("+(dt.getHours()<10?"0":"")+dt.getHours()+":"+(dt.getMinutes()<10?"0":"")+dt.getMinutes()+")";
 						sp_err.classList.toggle("err",true);
 					}else{
-						let time = vl.tm * 1000;
-						const date = Number(new Date());
-						let dt = new Date(time);
-						if ((date-30000) > time){
-							let ot = Math.floor((date - time)/60000);
-							let he="";
-							if (ot > 59){
-								let ho = Math.floor(ot/60);
-								let mo = ot%60;
-								let strH="", strM="", sMM="";
-								if ((ho < 2)||((ho % 100) > 20 && (ho % 10) < 2 && (ho % 10) > 0)) strH = " час";
-								else if((ho < 5)||((ho % 100) > 20 && (ho % 10) < 5 && (ho % 10) > 0)) strH = " часа";
-								else strH = " часов";
-
-								if ((mo < 2)||(mo > 20 && (mo % 10) < 2 && (mo % 10) > 0)) strM = " минуту";
-								else if((mo < 5)||(mo > 20 && ((mo % 10) < 5) && ((mo % 10) > 0))) strM = " минуты";
-								else strM = " минут";
-								if (mo>0)sMM=" "+mo+strM;
-								he = ho+strH+sMM;
-							}else{
-                if ((ot < 2)||(ot > 20 && (ot % 10) < 2 && (ot % 10) > 0)) strM = " минуту";
-								else if((ot < 5)||(ot > 20 && ((ot % 10) < 5) && ((ot % 10) > 0))) strM = " минуты";
-								else strM = " минут";
-								he = ot+strM+"!";
-							}
-							sp_err.innerHTML = "Время отстает на "+he+" ("+(dt.getHours()<10?"0":"")+dt.getHours()+":"+(dt.getMinutes()<10?"0":"")+dt.getMinutes()+")";
-							sp_err.classList.toggle("err",true);
-						}else{
-							sp_err.innerHTML = "Время "+(dt.getHours()<10?"0":"")+dt.getHours()+":"+(dt.getMinutes()<10?"0":"")+dt.getMinutes();
-							sp_err.classList.toggle("err",false);
-						};
-            sp_t.innerHTML = vl.vol.temp.toFixed(2)+"°C";
-            sp_h.innerHTML = vl.vol.hud.toFixed(0)+"%";					
+						sp_err.innerHTML = "Время "+(dt.getHours()<10?"0":"")+dt.getHours()+":"+(dt.getMinutes()<10?"0":"")+dt.getMinutes();
+						sp_err.classList.toggle("err",false);
 					};
+					sp_t.innerHTML = vl.vol.temp.toFixed(2)+"°C";
+					sp_h.innerHTML = vl.vol.hud.toFixed(0)+"%";					
 				};
 				if (timerId){
 					clearTimeout(timerId);
 					timerId = null;
 				}
 				timerId = setTimeout(set_val, re_val, 4);
-			} catch (error) {
-			  console.log(error.message);
+			}).catch(()=>{
 				if (timerId){
 					clearTimeout(timerId);
 					timerId = null;
 				}
-			  timerId = setTimeout(set_val, re_val, 4);
-			};
+				timerId = setTimeout(set_val, re_val, 4);
+			});	
 		break;
 		case 5:
-			try {
-				const res = await fetch("/servers.json");
+			fetch("/servers.json")
+			.then(res =>{
 				if (res.ok){
-					const vl = await res.json();
-					let tbl=get_el("el_t");
+					return res.json();
+				}else{
+					throw new UserException('File not font!');
+				}
+			}).then(vl => {
+				let tbl=get_el("el_t");
 					let tr, td;
 					while (tbl.rows.length>1) {
 					  tbl.deleteRow(1);
@@ -1076,17 +1154,20 @@ async function set_val(pp) {
 						servers.push(vl.serv[i]);
 					};
 					serv_cnf(0);
-				};
-			} catch (error) {
-			  console.log(error.message);
-			};
+			}).catch(()=>{
+				alert("Что-то пошло не так!");
+			});
 		break;
 		case 6:
-			try {
-				const res = await fetch("/finger.json");
+			fetch("/finger.json")
+			.then(res =>{
 				if (res.ok){
-					const vl = await res.json();
-					let tbl=get_el("el_t");
+					return res.json();
+				}else{
+					throw new UserException('File not font!');
+				}
+			}).then(vl => {
+				let tbl=get_el("el_t");
 					let tr, td;
 					while (tbl.rows.length>1) {
 					  tbl.deleteRow(1);
@@ -1109,10 +1190,9 @@ async function set_val(pp) {
 						devs.push(vl[i]);
 					};
 					dev_cnf(0);
-				};
-			} catch (error) {
-			  console.log(error.message);
-			};
+			}).catch(()=>{
+				alert("Что-то пошло не так!");
+			});
 		break;
 		case 7:
 			fetch("/search_ap", {timeout: 5000}).then(res => res.text()).then(tx=>{
@@ -1120,6 +1200,7 @@ async function set_val(pp) {
 				setTimeout(function(){
 					fetch("/get_ap", {timeout: 5000}).then(res => res.json())
 					.then(jsn=>cltbl(jsn));
+					alert("Сканирование завершено!");
 				},10000);
 			}).catch((e) => {
 				console.log(e);
@@ -1151,7 +1232,9 @@ function check_s(e){
 		    	alert("Что-то пошло не так!");
 		    	console.log("err");
 		    };
-		  });
+		  }).catch(()=>{
+				alert("Что-то пошло не так!");
+			});
 			console.log("set wifi device");
 		break;
 		case "3":			
@@ -1173,17 +1256,26 @@ function check_s(e){
 		    	alert("Что-то пошло не так!");
 		    	console.log("err");
 		    };
-		  });
+		  }).catch(()=>{
+				alert("Что-то пошло не так!");
+			});
 			console.log("set bluetooth device");
 		break;
 	};
 }
-async function add_ht(pg, nd){
-	const res = await fetch("/"+pg);
-	if (res.ok){
-		const txt=await res.text();
+function add_ht(pg, nd){
+	fetch("/"+pg)
+	.then(res =>{
+		if (res.ok){
+			return res.txt();
+		}else{
+			throw new UserException('File not font!');
+		}
+	}).then(txt => {
 		nd.insertAdjacentHTML('beforeend', txt);
-	};
+	}).catch(()=>{
+		alert("Что-то пошло не так!");
+	});
 }
 async function go_pg(pg, frm = "", pp = 0, ftch=false) {
 	try {
@@ -1324,30 +1416,34 @@ async function go_pg(pg, frm = "", pp = 0, ftch=false) {
 			get_el("btn_srem").onclick = () => {
 				fetch("/delFingers", {
 					method: "PUT"
-				}).catch(()=>{
-					alert("Что-то пошло не так!");
 				}).then(res => {
 					if (res.ok) set_val(6);
 					return res.text();
 				}).then(txt=>{					
 					alert(txt);					
+				}).catch(()=>{
+					alert("Что-то пошло не так!");
 				});
 			};
 			get_el("btn_spr").onclick = () => {
-				let fD = new FormData();
-				fD.append("id", dev_id+1);
-				fetch("/delPhalanx", {
-					method: "POST",
-		      body: fD
-				}).catch(()=>{
-					alert("Что-то пошло не так!");
-				})
-				.then(res => {
-					if (res.ok) set_val(6);
-					return res.text();
-				}).then(txt=>{					
-					alert(txt);					
-				});
+				if (devs[dev_id].id){
+					let fD = new FormData();
+					fD.append("id", devs[dev_id].id);
+					fetch("/delPhalanx", {
+						method: "POST",
+						body: fD
+					})
+					.then(res => {
+						if (res.ok) set_val(6);
+						return res.text();
+					}).then(txt=>{					
+						alert(txt);					
+					}).catch(()=>{
+						alert("Что-то пошло не так!");
+					});
+				}else{
+					alert("Палец не назначен!");
+				}
 			};
 			get_el("btn_sad").onclick = add_phalanx;
 		  get_el("popn2").onclick = function(e){
