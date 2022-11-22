@@ -23,7 +23,7 @@ const tim_r = "<div class=title_s><span class=txt_s>Настройка врем�
 const serv_r = "<div class=title_s><span class=txt_s>Настройка сервера приема</span></div><div class=form_l id=frm></div><div class=in_s><input class=btn_s id=btn_sv type=button value=Сохранить></div>";
 const servh = "<div class=t_pl><div class=cnt_t><table class=ap id=el_t><tr><th>Серверы</table></div><div class=cnf_t><span class=txt_t id=n_tt></span><div class=form_k><span class=f_s>Использовать</span> <input class=chb id=chb_s type=checkbox value=1> <label class=\"f_i ch\"for=chb_s id=ch_s></label></div><div class=form_k><span class=f_s>Хост </span><input class=\"f_i t_s\"id=i_s_ph placeholder=\"Адрес сервера\"></div><div class=form_k><span class=f_s>Порт </span><input class=\"f_i t_s\"id=i_s_pp placeholder=Порт step=1 type=number></div><input class=btn_s id=btn_spv type=button value=Применить></div></div>";
 const stan_r = "<div class=title_s><span class=txt_s>Настройка отпечатков</span></div><div class=form_l id=frm></div><div class=in_s><input class=btn_s id=btn_sad type=button value=Добавить><input class=btn_s id=btn_srem type=button value=Очистить><input class=btn_s id=btn_sv type=button value=Сохранить></div>";
-const stanh = "<div class=t_pl><div class=cnt_t><table class=ap id=el_t><tr><th>Отпечатки</table></div><div class=cnf_t><span class=txt_t id=n_tt></span><div class=form_k><span class=f_s>Использовать</span> <input class=chb id=chb_e type=checkbox value=1> <label class=\"f_i ch\"for=chb_e id=ch_e></label></div><div class=form_k><span class=f_s>Наименование </span><input class=\"f_i t_s\"id=i_e_n placeholder=\"Наименование элемента\"></div><div class=form_k><span class=f_s></div><div class=form_k><span class=f_s>Палец</span> <select class=\"f_i t_s\"id=i_n_d type=text><option value=0>Большой палец<option value=1>Указательный палец<option value=2>Средний палец<option value=3>Безымянный палец<option value=4>Мизинец</select></div><input class=btn_s id=btn_spv type=button value=Применить><input class=btn_s id=btn_spr type=button value=Удалить></div></div>";
+const stanh = "<div class=t_pl><div class=cnt_t><table class=ap id=el_t><tr><th>Отпечатки</table></div><div class=cnf_t><span class=txt_t id=n_tt></span><div class=form_k><span class=f_s>Использовать</span> <input class=chb id=chb_e type=checkbox value=1> <label class=\"f_i ch\"for=chb_e id=ch_e></label></div><div class=form_k><span class=f_s>Наименование </span><input class=\"f_i t_s\"id=i_e_n placeholder=\"Наименование элемента\"></div><div class=form_k><span class=f_s></div><div class=form_k><span class=f_s>Палец</span> <select class=\"f_i t_s\"id=i_n_d type=text><option value=0>Большой палец<option value=1>Указательный палец<option value=2>Средний палец<option value=3>Безымянный палец<option value=4>Мизинец</select></div><input class=btn_s id=btn_spv type=button value=Применить><input class=btn_s id=btn_spr type=button value=Удалить></div></div><div class=ovrl id=pop2><div class=pop id=popn2><fieldset class=fiel><legend class=lgndf id=lgn_r>Добавление пальца</legend><div class=form_k><span class=f_s>Имя</span> <input class=\"f_i t_s\"id=i_n_l_p placeholder=Имя></div><div class=form_k><span class=f_s>Палец</span> <select class=\"f_i t_s\"id=i_n_i_p type=text></select></div></fieldset><div class=in_s><input class=btn_s id=btn_ssp type=button value=Добавить></div></div></div>";
 const re_val = 30000;
 const max_re_sts=30;
 
@@ -554,6 +554,88 @@ function device_viv(jsn, id){
 		}
 		i++;
 	});
+}
+function set_ext(){
+	get_el("pop2").onclick = function(e){
+		get_el("pop2").style.display="none";
+	};
+}
+function check_add_phalanx(){
+	fetch("/sts_finger")
+	.catch(()=>{
+		alert("Что-то пошло не так!");
+		set_ext();
+	})
+	.then(res => {
+		console.log(res);
+		if (res.ok){
+			res.json();
+		}else{
+			return {sts:4, res};
+		}
+	})
+	.catch((e)=>{
+		console.log(e);
+		alert("Что-то пошло не так!");
+		set_ext();
+	})
+	.then(jsn=>{
+		switch (jsn.sts) {
+			case 1:
+				setTimeout(check_add_phalanx, 1000);
+				break;	
+			case 2:
+				set_val(6);
+				get_el("pop2").style.display="none";
+				return "Палец добавлен! ID: "+jsn.id;
+				break;
+			case 3:
+				set_ext();
+				return "Что-то пошло не так!";
+				break;	
+			case 4:
+				return jsn.res.text();
+				break;
+			default:
+				set_ext();
+				return "Задание выполнено!";
+				break;
+		}
+	}).then(txt =>{
+		alert(txt);
+	});
+}
+function add_phalanx(){
+	get_el("btn_ssp").onclick = () =>{
+		if (get_el("i_n_l_p").value.length>=3){
+			let fD = new FormData();
+			fD.append("nm", get_el("i_n_l_p").value);
+			fD.append("ph", get_el("i_n_i_p").value);
+			get_el("pop2").onclick = function(e){
+				alert("Дождитесь завершения!");
+		  };
+			fetch("/addPhalanx", {
+				method: "POST",
+		    body: fD
+			})
+			.catch(()=>{
+				alert("Что-то пошло не так!");
+				set_ext();
+			})
+			.then(res => {
+				if (res.ok){
+					check_add_phalanx();
+				}
+				return res.text();
+			}).then(txt=>{
+				alert(txt);					
+			});
+		}else{
+			alert("Име не менее 3 знаков!");
+		}
+	};
+	get_el("pop2").style.display="block";
+
 }
 function get_sts(id, jsn=null){
 	let b_obj = {};
@@ -1248,12 +1330,27 @@ async function go_pg(pg, frm = "", pp = 0, ftch=false) {
 				fetch("/delPhalanx", {
 					method: "POST",
 		      body: fD
-				}).then(res => res.text()).then(txt=>{
+				}).catch(()=>{
+					alert("Что-то пошло не так!");
+				})
+				.then(res => res.text()).then(txt=>{
 					set_val(4);
 					alert(txt);					
-				})
-				.catch(res => res.text()).then(txt=>{alert(txt);});
+				});
 			};
+			get_el("btn_sad").onclick = add_phalanx;
+		  get_el("popn2").onclick = function(e){
+				e.stopPropagation();
+			};
+			get_el("pop2").onclick = function(e){
+			  get_el("pop2").style.display="none";
+		  };
+			phalanxs.forEach((el, i) => {
+				const opt = ce("option");
+				opt.value = i;
+				opt.text = el;
+				get_el("i_n_i_p").add(opt);
+			});
 			set_val(6);
 			set_cl("btn_spv", 18);
 			set_cl("btn_sv", 19);
