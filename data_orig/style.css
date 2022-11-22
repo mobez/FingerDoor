@@ -1,5 +1,5 @@
 body{
-	max-width: 800px;
+	max-width: 1000px;
 	margin: 0 auto;
 }
 .title{
@@ -288,7 +288,7 @@ body{
 		font-size: 1.4em;
 	}
 	.f_s, .f_i, .f_d, .btn_s, .men_btn, .f_b, .t_s, .f_er, .ev{
-		font-size: 0.85em;
+		font-size: 0.70em;
 	}
 	#btn_spv, #btn_spd{
 		font-size: 0.8em;
@@ -310,5 +310,16 @@ body{
 	.pop{
 		width: 99%;
 		padding: 15px 2px;
+	}
+}
+@media (max-width: 410px){
+	.ap tr {
+		font-size: 0.60em;
+	}
+	.cnt_t, .cnf_t {
+		width: 60%;
+	}
+	.men-btn {
+		font-size: 0.77em;
 	}
 }
