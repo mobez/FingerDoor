@@ -12,8 +12,8 @@ let serv_id=-1;
 let dev_id=0;
 let now_j, act_j;
 let peer_add={};
-const phalanxs = ["Большой", "Средний", "Указательный", "Безымянный", "Мизинец"];
-const volh = "<div class=title_s><span class=txt_s>Значения</span></div><div class=form_l id=frm><div class=form_k><span class=\"err ev\"id=ev_err></span></div><div class=form_k><span class=\"f_s nv\">Температура:</span><span class=f_v id=ev_tmp></span></div><div class=form_k><span class=\"f_s nv\">Влажность:</span><span class=f_v id=ev_hud></span></div></div><div class=in_s><input class=btn_s id=btn_v type=button value=Обновить><input class=btn_s id=btn_od type=button value=Открыть></div><div class=in_s><input class=btn_s id=btn_res type=button value=Перезагрузить> <input class=inp_hid id=fl_i type=file accept=.json name=fl_i onchange=sh_cnf(this)><label class=\"btn_s pr\"for=fl_i><span>Применить конф</span></label> <input class=btn_s id=btn_gcnf type=button value=\"Скачать конф\"></div>";
+const phalanxs = ["Большой", "Указательный", "Средний", "Безымянный", "Мизинец"];
+const volh = "<div class=title_s><span class=txt_s>Значения</span></div><div class=form_l id=frm><div class=form_k><span class=\"err ev\"id=ev_err></span></div><div class=form_k><span class=\"f_s nv\">Температура(ds):</span><span class=f_v id=ev_tmp2></span></div><div class=form_k><span class=\"f_s nv\">Температура:</span><span class=f_v id=ev_tmp></span></div><div class=form_k><span class=\"f_s nv\">Влажность:</span><span class=f_v id=ev_hud></span></div></div><div class=in_s><input class=btn_s id=btn_v type=button value=Обновить><input class=btn_s id=btn_od type=button value=Открыть></div><div class=in_s><input class=btn_s id=btn_res type=button value=Перезагрузить> <input class=inp_hid id=fl_i type=file accept=.json name=fl_i onchange=sh_cnf(this)><label class=\"btn_s pr\"for=fl_i><span>Применить конф</span></label> <input class=btn_s id=btn_gcnf type=button value=\"Скачать конф\"></div>";
 const lan = "<div class=form_k><span class=f_s>Wifi</span> <select class=\"f_i t_s\"id=i_l_w type=text><option value=1>Точка доступа<option value=2>Клиент<option value=3>Точка доступа и клиент</select></div><div class=form_k><span class=f_s>Имя</span> <input class=\"f_i t_s\"id=i_l_n placeholder=Имя></div><div class=form_k><span class=f_s>Пароль</span> <input class=\"f_i t_s\"id=i_l_p placeholder=Пароль type=password></div><div class=form_k><span class=f_s>Точка доступа</span> <input class=\"f_i t_s\"id=i_l_n_r placeholder=\"Точка доступа(Роутер)\"></div><div class=form_k><span class=f_s>Пароль точки</span> <input class=\"f_i t_s\"id=i_l_p_r placeholder=\"Пароль точки\"type=password></div><div class=form_k><span class=f_s>Логин</span> <input class=\"f_i t_s\"id=i_l_l placeholder=\"Точка доступа\"title=\"Доступ по web\"></div><div class=\"form_k nw_h\"><span class=f_s>Старый пароль</span> <input class=\"f_i t_s\"id=i_l_p_lo placeholder=Пароль type=password></div><div class=form_k><span class=f_s>Пароль</span> <input class=\"f_i t_s\"id=i_l_p_l placeholder=Пароль type=password></div>";
 const lan_r = "<div class=title_s><span class=txt_s>Настройка сети</span></div><div class=form_l id=frm></div><div class=in_s><input class=btn_s id=btn_sv type=button value=Сохранить></div>";
 const now_r = "<div class=title_s><span class=txt_s>Настройка ESP-NOW</span></div><div class=form_l id=frm></div><div class=in_s><input class=btn_s id=btn_sv type=button value=Сохранить></div><div class=title_s><span class=txt_s>Активные пиры</span></div><div class=form_l id=frmp_a><table class=peer id=tbp_a><tbody id=peer_act><tr><th>MAC<th></table></div><div class=title_s><span class=txt_s>Настройка пиров</span></div><div class=form_l id=frmp><table class=peer id=tbp><tbody id=peer><tr><th>Имя<th>MAC<th>Удалить<th>Настроить</table><div class=in_s><input class=\"t_s btn_a\"id=btn_avp type=button value=Добавить></div></div><div class=ovrl id=pop><div class=pop id=popn><fieldset class=fiel><legend class=lgndf id=lgn>Точки доступа</legend><table class=ap id=tbl><tbody id=ap><tr><th>Имя<th>Сигнал<th>MAC<th>Канал<th>Hide</table></fieldset><div class=in_s><input class=btn_s id=btn_ps type=button value=Сканировать></div></div></div><div class=ovrl id=pop2><div class=pop id=popn2><fieldset class=fiel><legend class=lgndf id=lgn_r>Настрайка для приема</legend><div class=form_k><span class=f_s>Тип</span> <span class=\"f_i t_s\"id=i_n_n_p></span></div><div class=form_k><span class=f_s>Наименование</span> <input class=\"f_i t_s\"id=i_n_l_p placeholder=Наименование></div><div class=form_k><span class=f_s>Начальный id изм</span> <select class=\"f_i t_s\"id=i_n_i_p type=text></select></div><div class=form_k><span class=f_s>Кол-во изм</span> <select class=\"f_i t_s\"id=i_n_c_p type=text></select></div><div class=form_k><span class=f_s>Автоизмерение</span> <input class=chb id=chb_s_a type=checkbox> <label class=\"f_i ch\"for=chb_s_a id=ch_p_m></label></div></fieldset><div class=in_s><input class=btn_s id=btn_psp type=button value=Сохранить></div><fieldset class=fiel><legend class=lgndf id=lgn_r>Настрайка устройства</legend><div class=form_k><span class=f_s>Wifi</span> <input class=chb id=chb_s_w type=checkbox value=2> <label class=\"f_i ch\"for=chb_s_w id=ch_p_w></label></div><div class=form_k><span class=f_s>Bluetooth</span> <input class=chb id=chb_s_b type=checkbox value=3> <label class=\"f_i ch\"for=chb_s_b id=ch_p_b></label></div></fieldset><div class=in_s><input class=btn_s id=btn_psn type=button value=Сохранить> <input class=btn_s id=btn_prn type=button value=Reboot></div><div class=title_s><span class=txt_s>Пиры устройства</span></div><table class=peer id=tbp_p><tbody id=peer_pdev><tr><th>MAC<th>Channel<th></table><div class=in_s><input class=btn_s id=btn_clr type=button value=Очистить></div></div></div>";
@@ -586,13 +586,9 @@ function set_ext(){
 }
 function check_add_phalanx(){
 	fetch("/sts_finger")
-	.catch(()=>{
-		alert("Что-то пошло не так!");
-		set_ext();
-	})
 	.then(res => {
 		if (res.ok){
-			res.json();
+			return res.json();
 		}else{
 			return {sts:4, res};
 		}
@@ -601,27 +597,27 @@ function check_add_phalanx(){
 		switch (jsn.sts) {
 			case 1:
 				setTimeout(check_add_phalanx, 1000);
-				break;	
+        return jsn;
 			case 2:
+				set_ext();
+        jsn.txt= "Что-то пошло не так!";
+				return jsn;
+			case 3:
 				set_val(6);
 				get_el("pop2").style.display="none";
-				return "Палец добавлен! ID: "+jsn.id;
-				break;
-			case 3:
-				set_ext();
-				return "Что-то пошло не так!";
-				break;	
-			case 4:
-				set_ext();
-				return jsn.res.text();
-				break;
+        jsn.txt= "Палец добавлен! ID: "+jsn.id;
+				return jsn;
+      case 4:
+          set_ext();
+          jsn.txt= "Что-то пошло не так!";
+          return jsn;
 			default:
 				set_ext();
-				return "Задание выполнено!";
-				break;
+        jsn.txt= "Задание выполнено!";
+				return jsn;
 		}
-	}).then(txt =>{
-		alert(txt);
+	}).then(jsn =>{
+    if (jsn.sts != 1) alert(jsn.txt);
 	})
 	.catch((e)=>{
 		console.log(e);
@@ -1113,6 +1109,7 @@ async function set_val(pp) {
 						sp_err.innerHTML = "Время "+(dt.getHours()<10?"0":"")+dt.getHours()+":"+(dt.getMinutes()<10?"0":"")+dt.getMinutes();
 						sp_err.classList.toggle("err",false);
 					};
+          sp_t2.innerHTML = vl.vol.temp2.toFixed(2)+"°C";
 					sp_t.innerHTML = vl.vol.temp.toFixed(2)+"°C";
 					sp_h.innerHTML = vl.vol.hud.toFixed(0)+"%";					
 				};
@@ -1189,6 +1186,7 @@ async function set_val(pp) {
 						tr.classList.add("hov");
 						devs.push(vl[i]);
 					};
+          dev_id=-1;
 					dev_cnf(0);
 			}).catch(()=>{
 				alert("Что-то пошло не так!");
@@ -1350,6 +1348,7 @@ async function go_pg(pg, frm = "", pp = 0, ftch=false) {
 				});
 			};
       sp_err = document.getElementById("ev_err");
+      sp_t2 = document.getElementById("ev_tmp2");
       sp_t = document.getElementById("ev_tmp");
       sp_h = document.getElementById("ev_hud");
 			set_val(4);				
@@ -1422,9 +1421,13 @@ async function go_pg(pg, frm = "", pp = 0, ftch=false) {
 					method: "PUT"
 				}).then(res => {
 					if (res.ok) set_val(6);
-					return res.text();
-				}).then(txt=>{					
-					alert(txt);					
+					return res.json();
+				}).then(jsn=>{			
+          if (jsn.p == 0){
+            alert("Отпечатки очищены!");
+          }else{
+            alert("Что-то пошло не так!");
+          }	
 				}).catch(()=>{
 					alert("Что-то пошло не так!");
 				});
@@ -1439,9 +1442,13 @@ async function go_pg(pg, frm = "", pp = 0, ftch=false) {
 					})
 					.then(res => {
 						if (res.ok) set_val(6);
-						return res.text();
+						return res.json();
 					}).then(txt=>{					
-						alert(txt);					
+						if (jsn.p == 0){
+              alert("Отпечаток удален!");
+            }else{
+              alert("Что-то пошло не так!");
+            }						
 					}).catch(()=>{
 						alert("Что-то пошло не так!");
 					});

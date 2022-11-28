@@ -2,7 +2,6 @@
 #include "wifi_conf.h"
 #include "esp_wifi.h"
 #include "espnow.h"
-#include "ETH.h"
 
 extern wifi_lan_cnf conf_lan[2];
 extern esp_now_cnf conf_esp_now[2];
@@ -121,6 +120,16 @@ void wifi_init(uint8_t indx) {
     // WiFi.channel(conf_esp_now[0].channel);
     //wifi_set_channel(conf_esp_now[0].channel);
     Serial.println("WiFi off");
+  }
+  WiFi.setHostname((char  *)conf_lan[0].mdns_name);
+  if (!fl_dns){
+    fl_dns=NBNS.begin((char  *)conf_lan[0].mdns_name);
+    //MDNS.begin(conf_lan[0].mdns_name);
+    //MDNS.addService(conf_lan[0].mdns_name, "http", "tcp", 80);
+  }else{
+    NBNS.end();
+    fl_dns = NBNS.begin((char  *)conf_lan[0].mdns_name);
+    //MDNS.setHostname(conf_lan[0].mdns_name);
   }
   esp_wifi_set_max_tx_power(127);
   esp_wifi_set_ps(WIFI_PS_NONE);

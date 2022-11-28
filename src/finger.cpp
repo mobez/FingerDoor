@@ -9,14 +9,19 @@ int freeIdFinger = -1;
 void IRAM_ATTR getID(void);
 
 extern fingers_cnf conf_finger[2][MAXFINGER];
+extern SemaphoreHandle_t Mutex_cnf_finger;
 
 int add_phalanx(void){
-  for (uint8_t i = 0; i < MAXFINGER; i++)
-  {
-    if(conf_finger[0][i].act){
-      freeIdFinger = i;
-      return freeIdFinger;
+  if( xSemaphoreTake( Mutex_cnf_finger, portMAX_DELAY ) == pdTRUE ){
+    for (uint8_t i = 0; i < MAXFINGER; i++)
+    {
+      if(!conf_finger[0][i].act){
+        freeIdFinger = i;
+        xSemaphoreGive( Mutex_cnf_finger );
+        return freeIdFinger;
+      }
     }
+    xSemaphoreGive( Mutex_cnf_finger );
   }
   return -1;
 }
@@ -263,7 +268,7 @@ int getFingerprintEnroll(uint8_t id) { /*add new finger*/
 int deleteFingerprint(uint8_t id) {
   int p = -1;
 
-  p = finger.deleteModel(id);
+  p = finger.deleteModel(id-1);
 
   if (p == FINGERPRINT_OK) {
     Serial.println("Deleted!");

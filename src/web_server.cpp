@@ -442,9 +442,12 @@ void init_web(void){
     if (figner_web != figner_start){
       if (add_phalanx()>=0){
         figner_web = figner_start;
-        conf_finger[1][freeIdFinger].id = freeIdFinger;
-        conf_finger[1][freeIdFinger].phalanx = (fingers)atoi(server.arg("ph").c_str());
-        strcpy((char  *)conf_finger[1][freeIdFinger].name, server.arg("nm").c_str());
+        if( xSemaphoreTake( Mutex_cnf_finger, portMAX_DELAY ) == pdTRUE ){
+          conf_finger[1][freeIdFinger].id = freeIdFinger+1;
+          conf_finger[1][freeIdFinger].phalanx = (fingers)atoi(server.arg("ph").c_str());
+          strcpy((char  *)conf_finger[1][freeIdFinger].name, server.arg("nm").c_str());
+          xSemaphoreGive( Mutex_cnf_finger );
+        }
         xSemaphoreGiveFromISR(addSemaphore, NULL);
         server.send(200, "text/plain", "Добавте палец!");
       }else{
@@ -458,7 +461,7 @@ void init_web(void){
     if (!check_autch()) return;
     JSONVar myObject;
     myObject["sts"] = figner_web;
-    myObject["id"] = freeIdFinger;
+    myObject["id"] = freeIdFinger+1;
     if ((figner_web == figner_ok) || (figner_web == figner_err)) figner_web = figner_none;
     server.send(200, "text/json", JSON.stringify(myObject));
   });
@@ -493,6 +496,7 @@ void init_web(void){
     if( xSemaphoreTake( Mutex_si_measure, portMAX_DELAY ) == pdTRUE ){
       myObject["vol"]["temp"] = meas_si.temp;
       myObject["vol"]["hud"] = meas_si.humidi;
+      myObject["vol"]["temp2"] = meas_si.temp_ds;
       myObject["tm"] = tv.tv_sec;
       xSemaphoreGive( Mutex_si_measure );;
     }

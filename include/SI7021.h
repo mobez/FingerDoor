@@ -9,6 +9,7 @@ typedef struct
 {
   float temp;
   float humidi;
+  float temp_ds;
 }meas_si7021;
 
 extern meas_si7021 meas_si;

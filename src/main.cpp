@@ -26,9 +26,10 @@
 #endif
 
 #include "SI7021.h"
+#include "ds18b.h"
 
-// #define LED 2
-#define LED 5
+#define LED 2
+//#define LED 5
 #define DOOR 32
 
 volatile SemaphoreHandle_t timerSemaphore;
@@ -61,6 +62,7 @@ extern volatile status_figner figner_web;
 extern fingers_cnf conf_finger[2][MAXFINGER];
 
 void opendoor(void){
+  Serial.println("Open door!");
   digitalWrite(DOOR, HIGH);
   vTaskDelay(500);
   digitalWrite(DOOR, LOW);
@@ -109,7 +111,8 @@ void setup() {
   }
 
   //test_led();
-  finger.LEDcontrol(FINGERPRINT_LED_BREATHING, 255, FINGERPRINT_LED_PURPLE);
+  //finger.LEDcontrol(FINGERPRINT_LED_BREATHING, 255, FINGERPRINT_LED_PURPLE);
+  finger.LEDcontrol(FINGERPRINT_LED_OFF, 0, FINGERPRINT_LED_PURPLE);
 
 
   Mutex_cnf_lan = xSemaphoreCreateMutex();
@@ -134,7 +137,9 @@ void setup() {
   dz.attach(1, gtm);
   times_init();
   init_temp_si();
+  init_ds();
   measuring();
+  measuring_ds();
 
   attachInterrupt(GPIOpin, getID, FALLING);
   // attachInterrupt(GPIOpin, getID, RISING);
@@ -143,6 +148,7 @@ void setup() {
 
   xTaskCreatePinnedToCore(sender,"Task1",10000,NULL,1,&SenderTask,0);                         
   delay(500);
+  digitalWrite(LED, LOW);
 }
 
 void loop() {
@@ -164,8 +170,8 @@ void sender(void * parameter){
       if (getFingerprintEnroll(freeIdFinger) == FINGERPRINT_OK){
         if( xSemaphoreTake( Mutex_cnf_finger, portMAX_DELAY ) == pdTRUE ){
           conf_finger[1][freeIdFinger].act =  true;
-          if (memcmp ((void*)&conf_finger[0], (void*)&conf_finger[1], sizeof(finger_cnf)) != 0){
-            memcpy((void*)&conf_finger[0], (void*)&conf_finger[1], sizeof(fingers_cnf));
+          if (memcmp ((void*)&conf_finger[0][freeIdFinger], (void*)&conf_finger[1][freeIdFinger], sizeof(finger_cnf)) != 0){
+            memcpy((void*)&conf_finger[0][freeIdFinger], (void*)&conf_finger[1][freeIdFinger], sizeof(fingers_cnf));
             xSemaphoreGive( Mutex_cnf_finger );
             if (!saveconfig(finger_cnf)) {
               Serial.println("Failed to save config");
@@ -173,6 +179,7 @@ void sender(void * parameter){
               Serial.println("Config saved");
             }            
           }else{
+            Serial.println("No saved");
             xSemaphoreGive( Mutex_cnf_finger );
           }
         }
@@ -181,11 +188,11 @@ void sender(void * parameter){
         figner_web = figner_err;
         finger.LEDcontrol(FINGERPRINT_LED_FLASHING, 25, FINGERPRINT_LED_RED, 10);
       }
-      attachInterrupt(GPIOpin, getID, LOW);
+      attachInterrupt(GPIOpin, getID, FALLING);
     }
     if (xSemaphoreTake(timerSemaphore, 0) == pdTRUE){  
       if ((figner_web == figner_ok) || (figner_web == figner_err)){
-        if (figner_web_cnt >= 60){
+        if (figner_web_cnt >= 40){
           figner_web = figner_none;
           figner_web_cnt=0;
         }else{
@@ -196,24 +203,25 @@ void sender(void * parameter){
       }
       if (mesur_cnt >= 9){
         measuring();
+        measuring_ds();
         mesur_cnt=0;
       }else{
         mesur_cnt++;
       }
     }
     // if (!digitalRead(GPIOpin)){
-    if (xSemaphoreTake(timerSemaphoreInt, 0) == pdTRUE){ 
-      act_fingther = true;
-      digitalWrite(LED, LOW); 
+    if (xSemaphoreTake(timerSemaphoreInt, 0) == pdTRUE){
+      digitalWrite(LED, HIGH);  
+      act_fingther = true; 
       vTaskDelay(30);
       if (getFingerprintID() >= 60){
         fingther_ok = true;
       }
-      digitalWrite(LED, HIGH); 
+      digitalWrite(LED, LOW);
     }
     else{
       if (act_fingther){
-        if ((fingther_ok)&&(conf_finger[0][finger.fingerID-1].act)){
+        if ((fingther_ok)&&(conf_finger[0][finger.fingerID].act)){
           finger.LEDcontrol(FINGERPRINT_LED_FLASHING, 25, FINGERPRINT_LED_BLUE, 10);
           Serial.println("Image ok");
           opendoor();

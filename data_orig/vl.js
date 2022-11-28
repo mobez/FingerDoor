@@ -1,6 +1,6 @@
 let main, timerId=null, sp_t,sp_h,sp_err;
 const re_val = 30000;
-const volh = "<div class=title_s><span class=txt_s>Значения</span></div><div class=form_l id=frm><div class=form_k><span class=\"err ev\"id=ev_err></span></div><div class=form_k><span class=\"f_s nv\">Температура:</span><span class=f_v id=ev_tmp></span></div><div class=form_k><span class=\"f_s nv\">Влажность:</span><span class=f_v id=ev_hud></span></div></div><div class=in_s><input class=btn_s id=btn_v type=button value=Обновить><input class=btn_s id=btn_od type=button value=Открыть></div>";
+const volh = "<div class=title_s><span class=txt_s>Значения</span></div><div class=form_l id=frm><div class=form_k><span class=\"err ev\"id=ev_err></span></div><div class=form_k><span class=\"f_s nv\">Температура(ds):</span><span class=f_v id=ev_tmp2></span></div><div class=form_k><span class=\"f_s nv\">Температура:</span><span class=f_v id=ev_tmp></span></div><div class=form_k><span class=\"f_s nv\">Влажность:</span><span class=f_v id=ev_hud></span></div></div><div class=in_s><input class=btn_s id=btn_v type=button value=Обновить><input class=btn_s id=btn_od type=button value=Открыть></div>";
 
 function ce(t) {
   return document.createElement(t);
@@ -57,6 +57,7 @@ async function up_vol() {
 					sp_err.innerHTML = "Время "+(dt.getHours()<10?"0":"")+dt.getHours()+":"+(dt.getMinutes()<10?"0":"")+dt.getMinutes();
 					sp_err.classList.toggle("err",false);
 				};
+				sp_t2.innerHTML = vl.vol.temp2.toFixed(2)+"°C";
 				sp_t.innerHTML = vl.vol.temp.toFixed(2)+"°C";
 				sp_h.innerHTML = vl.vol.hud.toFixed(0)+"%";					
 			};
@@ -87,6 +88,7 @@ function ready(){
 		}).then(res => res.text()).then(txt=>{alert(txt);});
 	};
 	sp_err = document.getElementById("ev_err");
+	sp_t2 = document.getElementById("ev_tmp2");
 	sp_t = document.getElementById("ev_tmp");
 	sp_h = document.getElementById("ev_hud");
 	up_vol();
