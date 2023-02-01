@@ -164,6 +164,7 @@ void sender(void * parameter){
   uint8_t figner_web_cnt=0, mesur_cnt=0;
   while(1){
     if (xSemaphoreTake(openSemaphore, 0) == pdTRUE){  
+      finger.LEDcontrol(FINGERPRINT_LED_FLASHING, 25, FINGERPRINT_LED_BLUE, 10);
       opendoor();
     }
     if (xSemaphoreTake(addSemaphore, 0) == pdTRUE){  
