@@ -215,7 +215,7 @@ void sender(void * parameter){
       digitalWrite(LED, HIGH);  
       act_fingther = true; 
       vTaskDelay(30);
-      if (getFingerprintID() >= 60){
+      if (getFingerprintID() >= 25){
         fingther_ok = true;
       }
       digitalWrite(LED, LOW);

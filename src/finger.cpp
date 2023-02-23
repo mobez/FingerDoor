@@ -43,7 +43,7 @@ uint8_t getFingerprintID(void) {
       return p;
     default:
       Serial.println("Unknown error");
-      return p;
+      return 0x04;
   }
 
   // OK success!
@@ -67,7 +67,7 @@ uint8_t getFingerprintID(void) {
       return p;
     default:
       Serial.println("Unknown error");
-      return p;
+      return 0x10;
   }
 
   // OK converted!

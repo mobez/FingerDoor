@@ -29,7 +29,7 @@ async function up_vol() {
 				let time = vl.tm * 1000;
 				const date = Number(new Date());
 				let dt = new Date(time);
-				if ((date-30000) > time){
+				if ((date-90000) > time){
 					let ot = Math.floor((date - time)/60000);
 					let he="";
 					if (ot > 59){
