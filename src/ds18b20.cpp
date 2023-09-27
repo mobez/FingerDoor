@@ -34,7 +34,7 @@ void measuring_ds(void){
   uint32_t timeout = millis();
   while (!sensords.isConversionComplete())
   {
-    if (millis() - timeout >= 800) // check for timeout
+    if (millis() - timeout >= 1000) // check for timeout
     {
       Serial.println("ERROR: timeout or disconnect");
       break;
@@ -46,10 +46,11 @@ void measuring_ds(void){
   if (t == DEVICE_CRC_ERROR)
   {
     Serial.println("ERROR: CRC error");
+  }else{
+    if( xSemaphoreTake( Mutex_si_measure, portMAX_DELAY ) == pdTRUE ){
+      meas_si.temp_ds = t;
+      xSemaphoreGive( Mutex_si_measure );
+    }
   }
   stop = millis();
-  if( xSemaphoreTake( Mutex_si_measure, portMAX_DELAY ) == pdTRUE ){
-    meas_si.temp_ds = t;
-    xSemaphoreGive( Mutex_si_measure );;
-  }
 }
