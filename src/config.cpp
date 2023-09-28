@@ -91,7 +91,8 @@ void defconfig(void) {
 }
 
 bool saveconfig(conf_type type) {
-  JSONVar myObject;
+  StaticJsonDocument<1024> myObject;
+  //JSONVar myObject;
   bool ss = true;
   String name_file;
   switch (type)
@@ -193,7 +194,10 @@ bool saveconfig(conf_type type) {
       }else{
         Serial.printf("Save file: %s\r\n", name_file.c_str());
       }
-      configFile.print(myObject);
+      if (serializeJson(myObject, configFile) == 0) {
+        Serial.println(F("Failed to write to file"));
+      }
+      //configFile.print(myObject);
       configFile.close();
       xSemaphoreGive( Mutex_file );
     }    
@@ -227,7 +231,9 @@ bool loadConfig(conf_type type) {
     return false;
     break;
   }
-  JSONVar myObject;
+  //StaticJsonDocument<1024> myObject;
+  DynamicJsonDocument myObject(1024);
+  //JSONVar myObject;
   if( xSemaphoreTake( Mutex_file, portMAX_DELAY ) == pdTRUE ){
     File configFile = FILESYSTEM.open(name_file, "r");
     if (!configFile) {
@@ -246,13 +252,14 @@ bool loadConfig(conf_type type) {
       saveconfig(type);
       return false;
     }
-    myObject = JSON.parse(configFile.readString());
-      if (JSON.typeof(myObject) == "undefined") {
-        Serial.println("Parsing input failed!");
-        xSemaphoreGive( Mutex_file );
-        saveconfig(type);
-        return false;
-      }
+    DeserializationError error = deserializeJson(myObject, configFile);
+    if (error){
+      Serial.println(F("Failed to read file, using default configuration"));
+      Serial.println("Parsing input failed!");
+      xSemaphoreGive( Mutex_file );
+      saveconfig(type);
+      return false;
+    }
     configFile.close();
     xSemaphoreGive( Mutex_file );
   }

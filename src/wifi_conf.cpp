@@ -12,7 +12,8 @@ bool fl_dns = false;
 void parseBytes(const char* str, char sep, byte* bytes, int maxBytes, int base);
 
 void scan_ap(void) {
-  JSONVar myObject;
+  StaticJsonDocument<1024> myObject;
+  //JSONVar myObject;
   String ssid;
   int32_t rssi;
   uint8_t encryptionType;
@@ -50,7 +51,9 @@ void scan_ap(void) {
                   ssid.c_str());
       delay(0);
     }
-    strcpy(buf_scan, JSON.stringify(myObject).c_str());
+    String output;
+    serializeJson(myObject, output);
+    strcpy(buf_scan, output.c_str());
   } else {
     Serial.printf(PSTR("WiFi scan error %d\r\n"), scanResult);
   }

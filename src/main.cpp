@@ -16,7 +16,8 @@
 #include "times.h"
 #include "web_server.h"
 
-#include <Arduino_JSON.h>
+//#include <Arduino_JSON.h>
+#include <ArduinoJson.h>
 
 #if FILESYSTEM == FFat
 #include <FFat.h>

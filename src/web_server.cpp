@@ -212,7 +212,8 @@ void handleFileList(void) {
   if (!check_autch()) return;
   if(!server.hasArg("dir")) {server.send(500, "text/plain", "BAD ARGS"); return;}
   if( xSemaphoreTake( Mutex_file, portMAX_DELAY ) == pdTRUE ){
-    JSONVar myObject;
+    StaticJsonDocument<1024> myObject;
+  //JSONVar myObject;
     int f=0;    
     String path = server.arg("dir");
     Serial.println("handleFileList: " + path);
@@ -228,7 +229,10 @@ void handleFileList(void) {
       }
     }
     xSemaphoreGive( Mutex_file );
-    server.send(200, "text/json", JSON.stringify(myObject));  
+    String output;
+    serializeJson(myObject, output);
+    //server.send(200, "text/json", JSON.stringify(myObject));  
+    server.send(200, "text/json", output);  
   }
 }
 
@@ -355,7 +359,8 @@ void init_web(void){
   server.on("/now", HTTP_GET, [](){
     uint8_t buf_mac[6];
     char_to_mac(WiFi.macAddress().c_str(), buf_mac);
-    JSONVar myObject;
+    StaticJsonDocument<1024> myObject;
+  //JSONVar myObject;
     if( xSemaphoreTake( Mutex_cnf_now, portMAX_DELAY ) == pdTRUE ){    
       myObject["max_peer"] = MAXPEERS;
       myObject["channel"] = conf_esp_now[0].channel;
@@ -387,10 +392,14 @@ void init_web(void){
       // }
       xSemaphoreGive( Mutex_cnf_now );
     }
-    server.send(200, "text/json", JSON.stringify(myObject));
+    String output;
+    serializeJson(myObject, output);
+    server.send(200, "text/json", output);
+    //server.send(200, "text/json", JSON.stringify(myObject));
   });  
   server.on("/peers", HTTP_GET, [](){
-    JSONVar myObject;
+    StaticJsonDocument<1024> myObject;
+  //JSONVar myObject;
     if( xSemaphoreTake( Mutex_cnf_now, portMAX_DELAY ) == pdTRUE ){
       for (uint8_t i = 0; i < MAXPEERS; i++)
       {
@@ -413,10 +422,14 @@ void init_web(void){
       }
       xSemaphoreGive( Mutex_cnf_now );
     }
-    server.send(200, "text/json", JSON.stringify(myObject));
+    String output;
+    serializeJson(myObject, output);
+    server.send(200, "text/json", output);
+    //server.send(200, "text/json", JSON.stringify(myObject));
   });
   server.on("/peers_act", HTTP_GET, [](){
-    JSONVar myObject;
+    StaticJsonDocument<1024> myObject;
+  //JSONVar myObject;
     if( xSemaphoreTake( Mutex_cnf_now, portMAX_DELAY ) == pdTRUE ){
       for (uint8_t i = 0; i < MAXPEERS; i++)
       {
@@ -431,7 +444,10 @@ void init_web(void){
       }
       xSemaphoreGive( Mutex_cnf_now );
     }
-    server.send(200, "text/json", JSON.stringify(myObject));
+    String output;
+    serializeJson(myObject, output);
+    server.send(200, "text/json", output);
+    //server.send(200, "text/json", JSON.stringify(myObject));
   });
   server.on("/open", HTTP_PUT, [](){
     xSemaphoreGiveFromISR(openSemaphore, NULL);
@@ -459,38 +475,51 @@ void init_web(void){
   });
   server.on("/sts_finger", HTTP_GET, [](){
     if (!check_autch()) return;
-    JSONVar myObject;
+    StaticJsonDocument<1024> myObject;
+  //JSONVar myObject;
     myObject["sts"] = figner_web;
     myObject["id"] = freeIdFinger+1;
     if ((figner_web == figner_ok) || (figner_web == figner_err)) figner_web = figner_none;
-    server.send(200, "text/json", JSON.stringify(myObject));
+    String output;
+    serializeJson(myObject, output);
+    server.send(200, "text/json", output);
+    //server.send(200, "text/json", JSON.stringify(myObject));
   });
   server.on("/delPhalanx", HTTP_POST, [](){
     if (!check_autch()) return;
-    JSONVar myObject;
+    StaticJsonDocument<1024> myObject;
+  //JSONVar myObject;
     if (figner_web != figner_start){
       figner_web = figner_start;
       myObject["p"] = deleteFingerprint(atoi(server.arg("id").c_str()));
       figner_web = figner_none;        
-      server.send(200, "text/json", JSON.stringify(myObject));
+      String output;
+      serializeJson(myObject, output);
+      server.send(200, "text/json", output);
+      //server.send(200, "text/json", JSON.stringify(myObject));
     }else{
       server.send(404, "text/plain", "Занято другими действиями!");
     }
   });
   server.on("/delFingers", HTTP_PUT, [](){
     if (!check_autch()) return;
-    JSONVar myObject;
+    StaticJsonDocument<1024> myObject;
+  //JSONVar myObject;
     if (figner_web != figner_start){
       figner_web = figner_start;
       myObject["p"] = deleteAllFingerprint();
       figner_web = figner_none;
-      server.send(200, "text/json", JSON.stringify(myObject));
+      String output;
+      serializeJson(myObject, output);
+      server.send(200, "text/json", output);
+      //server.send(200, "text/json", JSON.stringify(myObject));
     }else{
       server.send(404, "text/plain", "Занято другими действиями!");
     }
   });
   server.on("/val", HTTP_GET, [](){
-    JSONVar myObject;
+    StaticJsonDocument<1024> myObject;
+  //JSONVar myObject;
     timeval tv;
     gettimeofday(&tv, NULL);
     if( xSemaphoreTake( Mutex_si_measure, portMAX_DELAY ) == pdTRUE ){
@@ -500,7 +529,10 @@ void init_web(void){
       myObject["tm"] = tv.tv_sec;
       xSemaphoreGive( Mutex_si_measure );;
     }
-    server.send(200, "text/json", JSON.stringify(myObject));
+    String output;
+    serializeJson(myObject, output);
+    server.send(200, "text/json", output);
+    //server.send(200, "text/json", JSON.stringify(myObject));
   });
   server.on("/search_ap", HTTP_GET, [](){
     server.send(200, "text/plain", "Start search!");
@@ -519,17 +551,22 @@ void init_web(void){
   /*--------REMOVE ESP--------------*/
   server.on("/sts_now", HTTP_GET, [](){
     if (!check_autch()) return;
-    JSONVar myObject;
+    StaticJsonDocument<1024> myObject;
+  //JSONVar myObject;
     uint8_t buf_mac[6];
     char_to_mac(server.arg("mac").c_str(), buf_mac);
     web_dop sts = web_status_peer(get_id_to_mac(buf_mac));
     myObject["sts"] = sts.sts;
     myObject["cmd"] = sts.cmd;
-    server.send(200, "text/json", JSON.stringify(myObject));
+    String output;
+    serializeJson(myObject, output);
+    server.send(200, "text/json", output);
+    //server.send(200, "text/json", JSON.stringify(myObject));
     if ((sts.cmd == web_add_me)&&(sts.sts == web_succs)) get_cnf_esp_now(buf_mac);
   });
   server.on("/rem_cnf", HTTP_GET, [](){
-    JSONVar myObject;
+    StaticJsonDocument<1024> myObject;
+  //JSONVar myObject;
     uint8_t buf_mac[6];
     char_to_mac(server.arg("mac").c_str(), buf_mac);
     int id = get_id_to_mac(buf_mac);
@@ -553,7 +590,10 @@ void init_web(void){
           myObject["wifi"] = cnf_con_peers[id].wifi;
           xSemaphoreGive( Mutex_cnf_now );
         }
-        server.send(200, "text/json", JSON.stringify(myObject));
+        String output;
+        serializeJson(myObject, output);
+        server.send(200, "text/json", output);
+        //server.send(200, "text/json", JSON.stringify(myObject));
       }else{
         server.send(404, "text/plain", "Device NotFound");
       }
@@ -564,8 +604,11 @@ void init_web(void){
     if (!server.hasArg("plain")){
       server.send(501, "text/plain", "");
     }else{ 
-      JSONVar myObject = JSON.parse(server.arg("plain"));
-      if (JSON.typeof(myObject) == "undefined") {
+      DynamicJsonDocument myObject(1024);
+      DeserializationError error = deserializeJson(myObject, server.arg("plain"));
+      if (error){
+      //JSONVar myObject = JSON.parse(server.arg("plain"));
+      //if (JSON.typeof(myObject) == "undefined") {
         Serial.println("Parsing input failed!");
         server.send(510, "text/plain", "ERROR json not type");
       }else{
@@ -774,8 +817,11 @@ void init_web(void){
       return;
     }
     uint8_t channel_old = conf_esp_now[0].channel;
-    JSONVar myObject = JSON.parse(server.arg("plain"));
-    if (JSON.typeof(myObject) == "undefined") {
+    DynamicJsonDocument myObject(1024);
+    DeserializationError error = deserializeJson(myObject, server.arg("plain"));
+    if (error){
+    // JSONVar myObject = JSON.parse(server.arg("plain"));
+    // if (JSON.typeof(myObject) == "undefined") {
       Serial.println("Parsing input failed!");
       server.send(510, "text/plain", "ERROR json not type");
     }else{
@@ -848,8 +894,11 @@ void init_web(void){
     if (!server.hasArg("plain")){
       server.send(501, "text/plain", "");
     }else{ 
-      JSONVar myObject = JSON.parse(server.arg("plain"));
-      if (JSON.typeof(myObject) == "undefined") {
+      DynamicJsonDocument myObject(1024);
+      DeserializationError error = deserializeJson(myObject, server.arg("plain"));
+      if (error){
+      // JSONVar myObject = JSON.parse(server.arg("plain"));
+      // if (JSON.typeof(myObject) == "undefined") {
         Serial.println("Parsing input failed!");
         server.send(510, "text/plain", "ERROR json not type");
       }else{        
@@ -921,8 +970,11 @@ void init_web(void){
     if (!server.hasArg("plain")){
       server.send(501, "text/plain", "");
     }else{  
-      JSONVar myObject = JSON.parse(server.arg("plain"));
-      if (JSON.typeof(myObject) == "undefined") {
+      DynamicJsonDocument myObject(1024);
+      DeserializationError error = deserializeJson(myObject, server.arg("plain"));
+      if (error){
+      // JSONVar myObject = JSON.parse(server.arg("plain"));
+      // if (JSON.typeof(myObject) == "undefined") {
         Serial.println("Parsing input failed!");
         server.send(510, "text/plain", "ERROR json not type");
       }else{
@@ -959,8 +1011,11 @@ void init_web(void){
       if (!server.hasArg("plain")){
         server.send(501, "text/plain", "");
       }else{
-        JSONVar myObject = JSON.parse(server.arg("plain"));
-        if (JSON.typeof(myObject) == "undefined") {
+        DynamicJsonDocument myObject(1024);
+        DeserializationError error = deserializeJson(myObject, server.arg("plain"));
+        if (error){
+        // JSONVar myObject = JSON.parse(server.arg("plain"));
+        // if (JSON.typeof(myObject) == "undefined") {
           Serial.println("Parsing input failed!");
           server.send(510, "text/plain", "ERROR json not type");
         }else{
@@ -994,8 +1049,11 @@ void init_web(void){
       server.send(501, "text/plain", "Body not received");
       return;
     }
-    JSONVar myObject = JSON.parse(server.arg("plain"));
-    if (JSON.typeof(myObject) == "undefined") {
+    DynamicJsonDocument myObject(1024);
+    DeserializationError error = deserializeJson(myObject, server.arg("plain"));
+    if (error){
+    // JSONVar myObject = JSON.parse(server.arg("plain"));
+    // if (JSON.typeof(myObject) == "undefined") {
       Serial.println("Parsing input failed!");
       server.send(510, "text/plain", "ERROR json not type");
     }else{
@@ -1119,7 +1177,8 @@ void init_web(void){
       // Serial.println(message);
   });
   server.on("/cnf_get", HTTP_GET, [](){
-    JSONVar myObject;
+    StaticJsonDocument<1024> myObject;
+    //JSONVar myObject;
     myObject["conf"] = true;
     myObject["ver"] = ver;
     if( xSemaphoreTake( Mutex_cnf_lan, portMAX_DELAY ) == pdTRUE ){
@@ -1166,7 +1225,10 @@ void init_web(void){
       }
       xSemaphoreGive( Mutex_cnf_finger );
     }
-    server.send(200, "text/json", JSON.stringify(myObject));
+    String output;
+    serializeJson(myObject, output);
+    server.send(200, "text/json", output);
+    //server.send(200, "text/json", JSON.stringify(myObject));
   });
   //here the list of headers to be recorded
   const char * headerkeys[] = {"User-Agent","Cookie"} ;

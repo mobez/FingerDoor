@@ -4,7 +4,8 @@
 #include "FS.h"
 //#include "FFat.h"
 //#include "LittleFS.h"
-#include <Arduino_JSON.h>
+//#include <Arduino_JSON.h>
+#include <ArduinoJson.h>
 
 #define FILESYSTEM SPIFFS
 
