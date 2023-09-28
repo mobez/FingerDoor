@@ -28,6 +28,9 @@
 #include "SI7021.h"
 #include "ds18b.h"
 
+#include "telegram.h"
+
+
 #define LED 2
 //#define LED 5
 #define DOOR 32

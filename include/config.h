@@ -93,13 +93,20 @@ typedef struct{
   fingers phalanx;
 }fingers_cnf;
 
+typedef struct{
+  char name[30];   /*BSDHomeBot*/
+  char token[50];  /*6570702688:AAEZ4b_dw4NARd_th0OwClNyXILnMj_DpkY*/
+  char idgrup[30]; /*1944967965*/
+}telegram_cnf;
+
 enum conf_type{
   lan_cnf = 0,
   now_cnf,
   times_cnf,
   server_cnf,
   finger_cnf,
-  ver_cnf
+  ver_cnf,
+  teleg_cnf,
 };
 
 
@@ -112,6 +119,7 @@ enum conf_type{
 #define SERVERFILE "/servers.json"
 #define FINGERFILE "/finger.json"
 #define VERFILE "/ver.json"
+#define TELEGRAMFILE "/telegram.json"
 #define DEFCHANNEL 6
 
 // extern wifi_lan_cnf conf_lan[2];
