@@ -1,13 +1,17 @@
 #include "config.h"
 #include "telegram.h"
+#include "SI7021.h"
 
 extern SemaphoreHandle_t Mutex_cnf_telegram;
+extern SemaphoreHandle_t Mutex_si_measure;
+extern SemaphoreHandle_t openSemaphore;
 extern telegram_cnf conf_telegram[2];
 
 WiFiClientSecure client;
 UniversalTelegramBot bot(conf_telegram[0].token, client);
 
 unsigned long lastTimeBotRan;
+char text_send[512];
 
 // Задаем действия при получении новых сообщений 
 void handleNewMessages(int numNewMessages) {
@@ -38,6 +42,28 @@ void handleNewMessages(int numNewMessages) {
  
     if (text == "/help") {
       bot.sendMessage(chat_id, "Help:\r\n", "");
+    }else if(text == "/weather"){
+      // time_t now;
+      // char strftime_buf[64];
+      // struct tm timeinfo;
+
+      // time(&now);
+      // // Set timezone to China Standard Time
+      // setenv("TZ", "CST-8", 1);
+      // tzset();
+
+      // localtime_r(&now, &timeinfo);
+      // strftime(strftime_buf, sizeof(strftime_buf), "%c", &timeinfo);
+      // ESP_LOGI(TAG, "The current date/time in Shanghai is: %s", strftime_buf);
+      if( xSemaphoreTake( Mutex_si_measure, portMAX_DELAY ) == pdTRUE ){
+        char t_0[6];
+        char t_1[6];
+        dtostrf(meas_si.temp, 6, 2, t_0); 
+        dtostrf(meas_si.temp_ds, 6, 2, t_1);
+        sprintf(text_send, "Температура ds: %s\xB0\\C\r\n\\Температура: %s\r\n\\Влажность: %d\r\n", t_1, t_0, meas_si.humidi);        
+        xSemaphoreGive( Mutex_si_measure );;
+      }
+      bot.sendMessage(chat_id, text_send, "");
     }
 
     // if (text == "/led_on") {

@@ -12,12 +12,14 @@ extern esp_now_cnf conf_esp_now[2];
 extern time_cnf conf_time[2];
 extern servers_cnf conf_server[2];
 extern fingers_cnf conf_finger[2][MAXFINGER];
+extern telegram_cnf conf_telegram[2];
 
 extern SemaphoreHandle_t Mutex_cnf_lan;
 extern SemaphoreHandle_t Mutex_cnf_server;
 extern SemaphoreHandle_t Mutex_cnf_time;
 extern SemaphoreHandle_t Mutex_cnf_finger;
 extern SemaphoreHandle_t Mutex_cnf_now;
+extern SemaphoreHandle_t Mutex_cnf_telegram;
 extern SemaphoreHandle_t Mutex_value;
 extern SemaphoreHandle_t Mutex_file;
 extern SemaphoreHandle_t Mutex_si_measure;
@@ -322,6 +324,9 @@ void init_web(void){
     else if (server.uri() == FINGERFILE) {
         autch=true;
     }
+    else if (server.uri() == TELEGRAMFILE) {
+        autch=true;
+    }
     else if (server.uri() == "/config") {
         autch=true;
     }
@@ -517,6 +522,22 @@ void init_web(void){
       server.send(404, "text/plain", "Занято другими действиями!");
     }
   });
+  server.on("/teleg", HTTP_GET, [](){
+    StaticJsonDocument<1024> myObject;
+    if( xSemaphoreTake( Mutex_cnf_telegram, portMAX_DELAY ) == pdTRUE ){    
+      myObject["tlgrmName"] = conf_telegram[0].name;
+      myObject["token"] = conf_telegram[0].token;
+      myObject["idgrup"] = conf_telegram[0].idgrup;
+      myObject["delay"] = conf_telegram[0].botRequestDelay;
+      myObject["err"] = 0;
+      xSemaphoreGive( Mutex_cnf_telegram );
+    }else{
+      myObject["err"] = 1;
+    }
+    String output;
+    serializeJson(myObject, output);
+    server.send(200, "text/json", output);
+  }); 
   server.on("/val", HTTP_GET, [](){
     StaticJsonDocument<1024> myObject;
   //JSONVar myObject;
@@ -1043,13 +1064,45 @@ void init_web(void){
         }    
       }
   });
+  server.on("/set_teleg", HTTP_POST, [](){
+    if (!check_autch()) return;    
+      if (!server.hasArg("plain")){
+        server.send(501, "text/plain", "");
+      }else{
+        DynamicJsonDocument myObject(1024);
+        DeserializationError error = deserializeJson(myObject, server.arg("plain"));
+        if (error){
+          Serial.println("Parsing input failed!");
+          server.send(510, "text/plain", "ERROR json not type");
+        }else{
+          if( xSemaphoreTake( Mutex_cnf_telegram, portMAX_DELAY ) == pdTRUE ){
+            strcpy((char  *)conf_telegram[1].name, myObject["tlgrmName"]);
+            strcpy((char  *)conf_telegram[1].token, myObject["token"]);
+            strcpy((char  *)conf_telegram[1].idgrup, myObject["idgrup"]);
+            conf_telegram[1].botRequestDelay = (int)myObject["delay"];
+            if (memcmp ((void*)&conf_telegram[0], (void*)&conf_telegram[1], sizeof(telegram_cnf)) != 0){
+              memcpy((void*)&conf_telegram[0], (void*)&conf_telegram[1], sizeof(telegram_cnf));
+              xSemaphoreGive( Mutex_cnf_telegram );
+              if (!saveconfig(finger_cnf)) {
+                  Serial.println("Failed to save config");
+              } else {
+                  Serial.println("Config saved");
+              }
+            }else{
+              xSemaphoreGive( Mutex_cnf_telegram );
+            }
+          }
+          server.send(200, "text/plain", "set telegram");
+        }    
+      }
+  });
   server.on("/cnf_set", HTTP_POST, [](){
     if (!check_autch()) return;
     if (!server.hasArg("plain")){ //Check if body received
       server.send(501, "text/plain", "Body not received");
       return;
     }
-    DynamicJsonDocument myObject(1024);
+    DynamicJsonDocument myObject(2024);
     DeserializationError error = deserializeJson(myObject, server.arg("plain"));
     if (error){
     // JSONVar myObject = JSON.parse(server.arg("plain"));
@@ -1157,6 +1210,23 @@ void init_web(void){
               xSemaphoreGive( Mutex_cnf_finger );
             }
           }
+          if( xSemaphoreTake( Mutex_cnf_telegram, portMAX_DELAY ) == pdTRUE ){
+            strcpy((char  *)conf_telegram[1].name, myObject["tlgrmName"]);
+            strcpy((char  *)conf_telegram[1].token, myObject["token"]);
+            strcpy((char  *)conf_telegram[1].idgrup, myObject["idgrup"]);
+            conf_telegram[1].botRequestDelay = (int)myObject["delay"];
+            if (memcmp ((void*)&conf_telegram[0], (void*)&conf_telegram[1], sizeof(telegram_cnf)) != 0){
+              memcpy((void*)&conf_telegram[0], (void*)&conf_telegram[1], sizeof(telegram_cnf));
+              xSemaphoreGive( Mutex_cnf_telegram );
+              if (!saveconfig(finger_cnf)) {
+                Serial.println("Failed to save config");
+              } else {
+                Serial.println("Config saved");
+              }
+            }else{
+              xSemaphoreGive( Mutex_cnf_telegram );
+            }
+          }
           send_redir("config");
           //server.send(200, "text/plain", "");
           //if (!conf_esp_now[0].new_device){
@@ -1177,7 +1247,7 @@ void init_web(void){
       // Serial.println(message);
   });
   server.on("/cnf_get", HTTP_GET, [](){
-    StaticJsonDocument<1024> myObject;
+    StaticJsonDocument<2048> myObject;
     //JSONVar myObject;
     myObject["conf"] = true;
     myObject["ver"] = ver;
@@ -1224,6 +1294,13 @@ void init_web(void){
         myObject[i]["phalanx"] = conf_finger[0][i].phalanx;
       }
       xSemaphoreGive( Mutex_cnf_finger );
+    }
+    if( xSemaphoreTake( Mutex_cnf_telegram, portMAX_DELAY ) == pdTRUE ){
+      myObject["tlgrmName"] = conf_telegram[0].name;
+      myObject["token"] = conf_telegram[0].token;
+      myObject["idgrup"] = conf_telegram[0].idgrup;
+      myObject["delay"] = conf_telegram[0].botRequestDelay;
+      xSemaphoreGive( Mutex_cnf_telegram );
     }
     String output;
     serializeJson(myObject, output);

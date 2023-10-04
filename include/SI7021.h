@@ -8,7 +8,7 @@
 typedef struct 
 {
   float temp;
-  float humidi;
+  uint8_t humidi;
   float temp_ds;
 }meas_si7021;
 
