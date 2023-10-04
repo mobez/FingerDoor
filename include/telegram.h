@@ -11,5 +11,10 @@
   X509List cert(TELEGRAM_CERTIFICATE_ROOT);
 #endif
 
+extern WiFiClientSecure client;
+extern UniversalTelegramBot bot;
+extern unsigned long lastTimeBotRan;
+void handleNewMessages(int numNewMessages);
+void telegraminit(void);
 
 #endif /* TELEGRAM_H_ */

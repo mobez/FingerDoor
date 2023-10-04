@@ -7,6 +7,7 @@ extern SemaphoreHandle_t Mutex_cnf_server;
 extern SemaphoreHandle_t Mutex_cnf_time;
 extern SemaphoreHandle_t Mutex_cnf_finger;
 extern SemaphoreHandle_t Mutex_cnf_now;
+extern SemaphoreHandle_t Mutex_cnf_telegram;
 extern SemaphoreHandle_t Mutex_value;
 extern SemaphoreHandle_t Mutex_file;
 
@@ -14,6 +15,7 @@ wifi_lan_cnf conf_lan[2];
 esp_now_cnf conf_esp_now[2];
 time_cnf conf_time[2];
 servers_cnf conf_server[2];
+telegram_cnf conf_telegram[2];
 fingers_cnf conf_finger[2][MAXFINGER];
 
 float ver_s = 0.0;
@@ -87,6 +89,13 @@ void defconfig(void) {
       conf_finger[0][i].phalanx = thumb;
     }
     xSemaphoreGive( Mutex_cnf_finger );
+  }  
+  if( xSemaphoreTake( Mutex_cnf_telegram, portMAX_DELAY ) == pdTRUE ){
+    strcpy((char  *)conf_telegram[0].name, "BSDHomeBot");
+    strcpy((char  *)conf_telegram[0].token, "");
+    strcpy((char  *)conf_telegram[0].idgrup, "0");
+    conf_telegram[0].botRequestDelay = 1000;
+    xSemaphoreGive( Mutex_cnf_telegram );
   }
 }
 
@@ -179,6 +188,16 @@ bool saveconfig(conf_type type) {
       xSemaphoreGive( Mutex_cnf_finger );
     }
     break;
+  case teleg_cnf:
+    name_file = TELEGRAMFILE;
+    if( xSemaphoreTake( Mutex_cnf_telegram, portMAX_DELAY ) == pdTRUE ){
+      myObject["name"] = conf_telegram[0].name;
+      myObject["token"] = conf_telegram[0].token;
+      myObject["idgrup"] = conf_telegram[0].idgrup;
+      myObject["delay"] = conf_telegram[0].botRequestDelay;
+      xSemaphoreGive( Mutex_cnf_telegram );
+    }
+    break;
   default:
     ss=false;
     break;
@@ -226,6 +245,9 @@ bool loadConfig(conf_type type) {
     break;
   case ver_cnf:
     name_file = VERFILE;
+    break;
+  case teleg_cnf:
+    name_file = TELEGRAMFILE;
     break;
   default:
     return false;
@@ -376,6 +398,15 @@ bool loadConfig(conf_type type) {
       xSemaphoreGive( Mutex_cnf_finger );
     }
     break;
+  case teleg_cnf:
+    if( xSemaphoreTake( Mutex_cnf_telegram, portMAX_DELAY ) == pdTRUE ){
+      strcpy((char  *)conf_telegram[0].name, myObject["name"]);
+      strcpy((char  *)conf_telegram[0].token, myObject["token"]);
+      strcpy((char  *)conf_telegram[0].idgrup, myObject["idgrup"]);
+      conf_telegram[0].botRequestDelay = (int)myObject["delay"];
+      xSemaphoreGive( Mutex_cnf_telegram );
+    }
+    break;
   default:
     break;
   }
@@ -404,11 +435,13 @@ void initconfig(void) {
       saveconfig(times_cnf);
       saveconfig(server_cnf);
       saveconfig(finger_cnf);
+      saveconfig(teleg_cnf);
     }else{    
       loadConfig(now_cnf);
       loadConfig(times_cnf);
       loadConfig(server_cnf);
       loadConfig(finger_cnf);
+      loadConfig(teleg_cnf);
     }
   }else{
     Serial.println("Failed init file system!");

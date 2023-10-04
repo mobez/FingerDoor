@@ -49,6 +49,7 @@ SemaphoreHandle_t Mutex_cnf_server;
 SemaphoreHandle_t Mutex_cnf_time;
 SemaphoreHandle_t Mutex_cnf_finger;
 SemaphoreHandle_t Mutex_cnf_now;
+SemaphoreHandle_t Mutex_cnf_telegram;
 SemaphoreHandle_t Mutex_value;
 SemaphoreHandle_t Mutex_file;
 SemaphoreHandle_t Mutex_send_now;
@@ -64,6 +65,9 @@ void getID(void);
 extern int freeIdFinger;
 extern volatile status_figner figner_web;
 extern fingers_cnf conf_finger[2][MAXFINGER];
+extern telegram_cnf conf_telegram[2];
+
+
 
 void opendoor(void){
   Serial.println("Open door!");
@@ -144,6 +148,8 @@ void setup() {
   init_ds();
   measuring();
   measuring_ds();
+  telegraminit();
+
 
   attachInterrupt(GPIOpin, getID, FALLING);
   // attachInterrupt(GPIOpin, getID, RISING);
@@ -159,6 +165,20 @@ void loop() {
   while(1){
     server.handleClient();
     vTaskDelay(5);
+    if( xSemaphoreTake( Mutex_cnf_telegram, portMAX_DELAY ) == pdTRUE ){
+      if (millis() > lastTimeBotRan + conf_telegram[0].botRequestDelay) {
+        xSemaphoreGive( Mutex_cnf_telegram );
+        int numNewMessages = bot.getUpdates(bot.last_message_received + 1);    
+        while(numNewMessages) {
+          Serial.println("got response");
+          handleNewMessages(numNewMessages);
+          numNewMessages = bot.getUpdates(bot.last_message_received + 1);
+        }
+        lastTimeBotRan = millis();
+      }else{
+        xSemaphoreGive( Mutex_cnf_telegram );
+      }
+    }
   }
 }
 

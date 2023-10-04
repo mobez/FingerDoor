@@ -96,8 +96,9 @@ typedef struct{
 
 typedef struct{
   char name[30];   /*BSDHomeBot*/
-  char token[50];  /*6570702688:AAEZ4b_dw4NARd_th0OwClNyXILnMj_DpkY*/
-  char idgrup[30]; /*1944967965*/
+  char token[50];  /*6580702688:AAEZ4b_dw4NARd_th0OwClNyXILnMj_DpkY*/
+  char idgrup[30]; /*1944962965*/
+  int botRequestDelay; /*1000ms*/
 }telegram_cnf;
 
 enum conf_type{
